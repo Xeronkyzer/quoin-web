@@ -12,48 +12,27 @@ import {
 const services = [
   {
     number: "01",
-    letter: "P",
-    title: "Competitor Price Intelligence",
-    audience: "For e-commerce brands",
-    description:
-      "A weekly view of price and stock movements across five competitors, delivered in a structured Google Sheet.",
-    features: [
-      "Five competitors monitored",
-      "Weekly price and stock report",
-      "Alerts on price drops",
-    ],
-    setup: "$500 setup",
-    monthly: "$300 / month",
+    letter: "W",
+    title: "Web Scraping",
+    link: "/scraping",
+    price: "From $99",
+    description: "Custom web data extraction and structured data collection.",
   },
   {
     number: "02",
     letter: "K",
     title: "Internal Knowledge Assistant",
-    audience: "For service businesses with 20–100 employees",
-    description:
-      "A private assistant trained on your SOPs and handbook, giving your team reliable answers from approved sources.",
-    features: [
-      "Private, company-specific chatbot",
-      "SOP and handbook ingestion",
-      "Monthly knowledge refresh",
-    ],
-    setup: "$1,500 setup",
-    monthly: "$250 / month",
+    link: "/knowledge-assistant",
+    price: "From $299",
+    description: "Turn your business knowledge and documents into an AI-powered assistant.",
   },
   {
     number: "03",
-    letter: "L",
-    title: "Local Search Reporting",
-    audience: "For dentists, law firms, HVAC, and med spas",
-    description:
-      "A concise monthly scorecard that turns local search data into a short list of practical improvements.",
-    features: [
-      "Rankings, clicks, and competitors",
-      "Google Business Profile review",
-      "Three recommended fixes",
-    ],
-    setup: "$499 initial audit",
-    monthly: "$199 / month / location",
+    letter: "S",
+    title: "SEO & Search Intelligence",
+    link: "/seo",
+    price: "From $99/mo",
+    description: "Research, track, and improve your search visibility.",
   },
 ]
 
@@ -98,6 +77,276 @@ const faqs = [
       "The standard packages are intentionally focused. If you need additional locations, competitors, or document sources, we can scope those separately.",
   },
 ]
+
+const chatbotKnowledge = [
+  { keywords: ["contract", "long-term", "lock", "commitment", "cancel", "cancellation"], answer: "No long-term contracts. Managed services are billed monthly after the initial setup or audit. You can cancel before the next billing cycle with 30 days' written notice." },
+  { keywords: ["start", "started", "begin", "onboard", "timeline", "how long", "when"], answer: "Most engagements begin within 1–2 weeks of the consultation, depending on access to the required data and documents. You'll have your first delivery shortly after configuration." },
+  { keywords: ["data", "information", "security", "privacy", "safe", "secure", "handle"], answer: "We only request the access needed to deliver the service. Each client gets a separate instance. Details about data handling, retention, and permissions are agreed during configuration. We comply with DPDP Act 2023 and GDPR where relevant." },
+  { keywords: ["custom", "customize", "modify", "change", "tailor", "additional"], answer: "The standard packages are intentionally focused. If you need additional locations, competitors, or document sources, we can scope those separately via a change request." },
+  { keywords: ["price", "pricing", "cost", "fee", "charge", "expensive", "afford", "budget", "pay", "payment"], answer: "Our pricing is transparent and fixed:\n\n• Competitor Price Intelligence — $500 setup, $300/month\n• Internal Knowledge Assistant — $1,500 setup, $250/month\n• Local Search Reporting — $499 audit, $199/month/location\n\nAll prices in USD. No hidden fees." },
+  { keywords: ["competitor", "price intelligence", "monitor", "tracking", "e-commerce", "ecommerce"], answer: "Our Competitor Price Intelligence service monitors up to 5 competitors weekly, delivering price and stock reports in a structured Google Sheet with alerts on price drops. Perfect for e-commerce brands." },
+  { keywords: ["knowledge", "assistant", "chatbot", "sop", "handbook", "internal", "employee"], answer: "The Internal Knowledge Assistant is a private chatbot trained on your SOPs and handbook. It gives your team reliable answers from approved sources, with monthly content refreshes. Ideal for service businesses with 20–100 employees." },
+  { keywords: ["local", "search", "seo", "ranking", "google", "business", "dentist", "lawyer", "hvac"], answer: "Local Search Reporting provides a monthly scorecard covering rankings, clicks, competitors, Google Business Profile review, and 3 recommended fixes. Built for dentists, law firms, HVAC companies, and med spas." },
+  { keywords: ["process", "how", "work", "step", "workflow"], answer: "Our 4-step process:\n\n01 — Consultation: We confirm fit, scope, and business decisions.\n02 — Configuration: We collect sources and set up your workflow.\n03 — Delivery: You receive output on a clear schedule.\n04 — Review: We review performance and refine as needed." },
+  { keywords: ["consult", "consultation", "call", "meeting", "book", "schedule", "talk"], answer: "You can book a free 30-minute consultation through our website. It's a focused, no-obligation first conversation where we confirm whether Quoin is a fit for your needs. No sales pressure." },
+  { keywords: ["refund", "money back", "guarantee"], answer: "Setup fees are non-refundable once work has begun. Recurring fees are non-refundable for a period already started. However, if we fail to deliver a month's deliverables for reasons within our control, we'll credit or refund that month's fee on a pro-rata basis." },
+  { keywords: ["ai", "artificial intelligence", "automated", "machine learning"], answer: "Some of our deliverables use AI for assistant answers and report summaries. AI output is for general business information — not legal, HR, or financial advice. You should review output before relying on it for important decisions." },
+  { keywords: ["hello", "hi", "hey", "good morning", "good afternoon", "good evening", "sup"], answer: "Hey there. Welcome to Quoin. I'm here to help you understand our services, pricing, and process. What would you like to know?" },
+  { keywords: ["thank", "thanks", "bye", "goodbye", "see you"], answer: "You're welcome. If you have more questions later, I'm always here. You can also book a free consultation to talk to our team directly." },
+  { keywords: ["who", "about", "quoin", "company", "what do you do"], answer: "Quoin provides operational intelligence for growing businesses. We turn recurring operational questions into dependable workflows through three managed services with fixed pricing and clear deliverables." },
+]
+
+const chatTopics = [
+  { label: "Pricing", query: "pricing" },
+  { label: "Getting started", query: "how to start" },
+  { label: "Data security", query: "data security" },
+  { label: "Services", query: "what do you do" },
+  { label: "Process", query: "how does it work" },
+  { label: "Book a call", query: "consultation" },
+]
+
+function findBestAnswer(input: string): string {
+  const lower = input.toLowerCase()
+  let bestMatch = { score: 0, answer: "" }
+  for (const item of chatbotKnowledge) {
+    let score = 0
+    for (const keyword of item.keywords) {
+      if (lower.includes(keyword)) score += keyword.length
+    }
+    if (score > bestMatch.score) {
+      bestMatch = { score, answer: item.answer }
+    }
+  }
+  if (bestMatch.score > 0) return bestMatch.answer
+  return "I'm not sure about that one. You can browse the topics above or book a free consultation to speak with our team directly. We're happy to help."
+}
+
+type ChatMessage = { role: "user" | "bot"; text: string; action?: string }
+
+function Chatbot({ navigate }: { navigate: (path: string) => void }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: "bot", text: "Hi, I'm Quoin's assistant. Ask me anything about our services, pricing, or process — or pick a topic below." },
+  ])
+  const [input, setInput] = useState("")
+  const [isTyping, setIsTyping] = useState(false)
+  const [hasUnread, setHasUnread] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  function scrollToBottom() {
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }, 50)
+  }
+
+  async function sendMessage(text: string) {
+    if (!text.trim()) return
+    const userText = text.trim()
+    const userMsg: ChatMessage = { role: "user", text: userText }
+    
+    // We need the current history to send to Gemini
+    const currentHistory = [...messages]
+    
+    setMessages((prev) => [...prev, userMsg])
+    setInput("")
+    setIsTyping(true)
+    scrollToBottom()
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText, history: currentHistory })
+      })
+      const data = await res.json()
+      let botText = data.text || "I'm having trouble connecting to my brain right now. Try again later!"
+      let action = undefined
+
+      const leadMatch = botText.match(/\[SUBMIT_LEAD\]\s*(\{.*?\})/s)
+      if (leadMatch) {
+        try {
+          const leadData = JSON.parse(leadMatch[1])
+          const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwNW360QUZrhZFVtVYwsOUNem5_8eXQB66Ko-qSxOdoZnnVJlTJVsjimE8ditj8WzfYBA/exec"
+          
+          fetch(GOOGLE_SHEET_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: leadData.name || "Chat Lead",
+              email: leadData.email || "",
+              phone: leadData.phone || "",
+              service: leadData.service || "General Chat Inquiry",
+              message: leadData.message || "",
+              timestamp: new Date().toISOString(),
+            }),
+          }).catch(console.error)
+          
+          botText = botText.replace(leadMatch[0], "").trim()
+          botText += "\n\n(I've successfully submitted your requirements to our team! We will be in touch shortly.)"
+        } catch (err) {
+          console.error("Failed to parse lead data:", err)
+        }
+      } else if (botText.includes("[BOOK_CONSULTATION]")) {
+        botText = botText.replace("[BOOK_CONSULTATION]", "").trim()
+        action = "book_consultation"
+      }
+      
+      setMessages((prev) => [...prev, { role: "bot", text: botText, action }])
+    } catch (e) {
+      setMessages((prev) => [...prev, { role: "bot", text: "Something went wrong. Please book a consultation instead.", action: "book_consultation" }])
+    } finally {
+      setIsTyping(false)
+      if (!isOpen) setHasUnread(true)
+      scrollToBottom()
+    }
+  }
+
+  function handleTopicClick(query: string) {
+    sendMessage(query)
+  }
+
+  function toggleChat() {
+    setIsOpen((open) => !open)
+    if (!isOpen) {
+      setHasUnread(false)
+      setTimeout(() => inputRef.current?.focus(), 350)
+    }
+  }
+
+  return (
+    <div className="chatbot-container">
+      {isOpen && (
+        <div className="chatbot-window">
+          <div className="chatbot-header">
+            <div className="chatbot-header-info">
+              <div className="chatbot-avatar">Q</div>
+              <div>
+                <strong>Quoin Assistant</strong>
+                <span>Always online · Instant replies</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="chatbot-close"
+              onClick={toggleChat}
+              aria-label="Close chat"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M1 1l12 12M13 1 1 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="chatbot-messages">
+            {messages.map((msg, i) => (
+              <div key={i} className={`chatbot-msg chatbot-msg-${msg.role}`}>
+                {msg.role === "bot" && <div className="chatbot-msg-avatar">Q</div>}
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-start" }}>
+                  <div className="chatbot-msg-bubble">
+                    {msg.text.split("\n").map((line, j) => (
+                      <span key={j}>
+                        {line}
+                        {j < msg.text.split("\n").length - 1 && <br />}
+                      </span>
+                    ))}
+                  </div>
+                  {msg.action === "book_consultation" && (
+                    <button 
+                      className="button button-acid"
+                      style={{ fontSize: "14px", padding: "8px 16px", borderRadius: "100px", alignSelf: "flex-start", marginTop: "4px" }}
+                      onClick={() => {
+                        setIsOpen(false)
+                        navigate("/consultation")
+                      }}
+                    >
+                      Book a consultation <Arrow />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+            {isTyping && (
+              <div className="chatbot-msg chatbot-msg-bot">
+                <div className="chatbot-msg-avatar">Q</div>
+                <div className="chatbot-msg-bubble chatbot-typing">
+                  <span /><span /><span />
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {messages.length <= 1 && (
+            <div className="chatbot-topics">
+              {chatTopics.map((topic) => (
+                <button
+                  key={topic.label}
+                  type="button"
+                  className="chatbot-topic-chip"
+                  onClick={() => handleTopicClick(topic.query)}
+                >
+                  {topic.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <form
+            className="chatbot-input-area"
+            onSubmit={(e) => {
+              e.preventDefault()
+              if (!isTyping && messages.length < 20) {
+                sendMessage(input)
+              }
+            }}
+          >
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={messages.length >= 20 ? "Conversation limit reached." : "Type your question…"}
+              className="chatbot-input"
+              disabled={isTyping || messages.length >= 20}
+              maxLength={300}
+            />
+            <button
+              type="submit"
+              className="chatbot-send"
+              disabled={!input.trim() || isTyping || messages.length >= 20}
+              aria-label="Send message"
+            >
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path d="M3 10h14M12 5l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      )}
+
+      <button
+        type="button"
+        className={`chatbot-fab${isOpen ? " chatbot-fab-open" : ""}`}
+        onClick={toggleChat}
+        aria-label={isOpen ? "Close chat" : "Open chat assistant"}
+      >
+        {isOpen ? (
+          <svg width="22" height="22" viewBox="0 0 14 14" fill="none">
+            <path d="M1 1l12 12M13 1 1 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+        ) : (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+        {hasUnread && !isOpen && <span className="chatbot-unread-dot" />}
+      </button>
+    </div>
+  )
+}
+
 
 function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   return (
@@ -367,8 +616,8 @@ function HomePage({
             Process
           </a>
           <a
-            href="#pricing"
-            onClick={(event) => scrollToSection(event, "pricing")}
+            href="#services"
+            onClick={(event) => scrollToSection(event, "services")}
           >
             Pricing
           </a>
@@ -465,28 +714,40 @@ function HomePage({
           </div>
           <div className="service-grid">
             {services.map((service) => (
-              <article className="service-card" key={service.title}>
+              <article 
+                className={`service-card ${service.link ? 'is-clickable' : ''}`} 
+                key={service.title}
+                onClick={service.link ? (e) => openPage(e, service.link!) : undefined}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  ...(service.link ? { cursor: 'pointer' } : {})
+                }}
+              >
                 <div className="service-art" aria-hidden="true">
                   <span>{service.letter}</span>
                   <small>{service.number}</small>
                 </div>
-                <div className="service-body">
-                  <div className="service-number">{service.number}</div>
-                  <p className="eyebrow">{service.audience}</p>
-                  <h3>{service.title}</h3>
-                  <p className="service-description">{service.description}</p>
-                  <ul>
-                    {service.features.map((feature) => (
-                      <li key={feature}>{feature}</li>
-                    ))}
-                  </ul>
-                  <div className="service-price">
-                    <span>{service.setup}</span>
-                    <strong>{service.monthly}</strong>
-                  </div>
+                <div className="service-body" style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                  <h3 style={{ fontSize: '1.5rem', marginBottom: '8px' }}>{service.title}</h3>
+                  <strong style={{ fontSize: '1.25rem', color: 'var(--ink)', marginBottom: '16px', display: 'block' }}>{service.price}</strong>
+                  <p className="service-description" style={{ flexGrow: 1, marginBottom: '24px', color: 'var(--ink-light)' }}>{service.description}</p>
+                  
+                  {service.link && (
+                    <div style={{ marginTop: "auto" }}>
+                      <span className="header-cta" style={{ color: "var(--ink)", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "1rem" }}>
+                        Explore Service <Arrow />
+                      </span>
+                    </div>
+                  )}
                 </div>
               </article>
             ))}
+          </div>
+          <div style={{ marginTop: "40px", textAlign: "center" }}>
+            <span style={{ background: "var(--acid)", color: "var(--ink)", padding: "8px 16px", borderRadius: "0px", fontSize: "0.875rem", fontWeight: 500 }}>
+              Starting prices. Final pricing depends on project scope and requirements.
+            </span>
           </div>
         </section>
 
@@ -520,53 +781,10 @@ function HomePage({
           </div>
         </section>
 
-        <section id="pricing" className="section-frame pricing-section">
-          <div className="section-meta">
-            <span>03 — Pricing</span>
-            <span>Transparent by default</span>
-          </div>
-          <div className="section-heading">
-            <h2>
-              Know the cost
-              <br />
-              before we start.
-            </h2>
-            <p>
-              Fixed base pricing makes evaluation straightforward. Any expanded
-              scope is agreed before work begins.
-            </p>
-          </div>
-          <div
-            className="pricing-table"
-            role="table"
-            aria-label="Pricing summary"
-          >
-            <div className="pricing-row pricing-head" role="row">
-              <span role="columnheader">Service</span>
-              <span role="columnheader">Best for</span>
-              <span role="columnheader">Initial</span>
-              <span role="columnheader">Ongoing</span>
-            </div>
-            {services.map((service) => (
-              <div className="pricing-row" role="row" key={service.title}>
-                <span role="cell">
-                  <small>{service.number}</small>
-                  <strong>{service.title}</strong>
-                </span>
-                <span role="cell">{service.audience.replace("For ", "")}</span>
-                <span role="cell">{service.setup}</span>
-                <span role="cell">{service.monthly}</span>
-              </div>
-            ))}
-          </div>
-          <p className="pricing-note">
-            All prices in USD. Local Search Reporting is priced per location.
-          </p>
-        </section>
 
         <section id="faq" className="section-frame faq-section">
           <div className="section-meta">
-            <span>04 — FAQ</span>
+            <span>03 — FAQ</span>
             <span>Common questions</span>
           </div>
           <div className="faq-layout">
@@ -611,7 +829,6 @@ function HomePage({
             </div>
           </div>
         </section>
-
       </main>
       <footer className="home-footer">
         <a
@@ -638,8 +855,13 @@ function HomePage({
   )
 }
 
+// Replace this URL with your Google Apps Script Web App URL
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwNW360QUZrhZFVtVYwsOUNem5_8eXQB66Ko-qSxOdoZnnVJlTJVsjimE8ditj8WzfYBA/exec"
+
 function ConsultationPage({ navigate }: { navigate: Navigate }) {
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState("")
   const [serviceOpen, setServiceOpen] = useState(false)
   const [selectedService, setSelectedService] = useState("")
   const [serviceError, setServiceError] = useState(false)
@@ -647,14 +869,17 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
     email: "",
+    phone: "",
     message: "",
   })
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const formData = new FormData(event.currentTarget)
+    const form = event.currentTarget
+    const formData = new FormData(form)
     const name = String(formData.get("name") ?? "").trim()
     const email = String(formData.get("email") ?? "").trim()
+    const phone = String(formData.get("phone") ?? "").trim()
     const message = String(formData.get("message") ?? "").trim()
     const nextErrors = {
       name: name ? "" : "Please enter your name.",
@@ -663,27 +888,54 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
         : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
           ? ""
           : "Please enter a valid email address.",
+      phone: phone ? "" : "Please enter your phone number.",
       message: message ? "" : "Please describe what you would like to improve.",
     }
 
     setFieldErrors(nextErrors)
     setServiceError(!selectedService)
     setSubmitted(false)
+    setSubmitError("")
 
     if (
       nextErrors.name ||
       nextErrors.email ||
+      nextErrors.phone ||
       nextErrors.message ||
       !selectedService
     ) {
       return
     }
 
-    setSubmitted(true)
-    setServiceError(false)
-    setFieldErrors({ name: "", email: "", message: "" })
-    setSelectedService("")
-    event.currentTarget.reset()
+    setSubmitting(true)
+
+    try {
+      const response = await fetch(GOOGLE_SHEET_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          service: selectedService,
+          message,
+          timestamp: new Date().toISOString(),
+        }),
+      })
+
+      // no-cors mode always returns opaque response, so we treat it as success
+      void response
+      setSubmitted(true)
+      setServiceError(false)
+      setFieldErrors({ name: "", email: "", phone: "", message: "" })
+      setSelectedService("")
+      form.reset()
+    } catch {
+      setSubmitError("Something went wrong. Please try again or email us directly.")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   function leavePage(
@@ -799,6 +1051,27 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
                   )}
                 </label>
               </div>
+              <label>
+                <span>Phone number</span>
+                <input
+                  name="phone"
+                  type="tel"
+                  placeholder="+1 (555) 000-0000"
+                  required
+                  aria-invalid={Boolean(fieldErrors.phone)}
+                  aria-describedby={
+                    fieldErrors.phone ? "phone-error" : undefined
+                  }
+                  onChange={() =>
+                    setFieldErrors((errors) => ({ ...errors, phone: "" }))
+                  }
+                />
+                {fieldErrors.phone && (
+                  <p className="field-error" id="phone-error" role="alert">
+                    {fieldErrors.phone}
+                  </p>
+                )}
+              </label>
               <div
                 className="service-select-field"
                 onBlur={(event) => {
@@ -829,34 +1102,32 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
                   </span>
                   <i aria-hidden="true" />
                 </button>
-                {serviceOpen && (
-                  <div
-                    className="service-options"
-                    id="service-options"
-                    role="listbox"
-                    aria-label="Select a service"
-                  >
-                    {[...services.map((service) => service.title), "Not sure yet"].map(
-                      (service, index) => (
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={selectedService === service}
-                          key={service}
-                          onClick={() => {
-                            setSelectedService(service)
-                            setServiceError(false)
-                            setServiceOpen(false)
-                          }}
-                        >
-                          <span>0{index + 1}</span>
-                          <strong>{service}</strong>
-                          <i aria-hidden="true" />
-                        </button>
-                      ),
-                    )}
-                  </div>
-                )}
+                <div
+                  className={`service-options ${serviceOpen ? "is-open" : ""}`}
+                  id="service-options"
+                  role="listbox"
+                  aria-label="Select a service"
+                >
+                  {[...services.map((service) => service.title), "Not sure yet"].map(
+                    (service, index) => (
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={selectedService === service}
+                        key={service}
+                        onClick={() => {
+                          setSelectedService(service)
+                          setServiceError(false)
+                          setServiceOpen(false)
+                        }}
+                      >
+                        <span>0{index + 1}</span>
+                        <strong>{service}</strong>
+                        <i aria-hidden="true" />
+                      </button>
+                    ),
+                  )}
+                </div>
                 {serviceError && (
                   <p className="field-error" role="alert">
                     Please select a service.
@@ -887,12 +1158,19 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
               <button
                 className="button button-acid consultation-submit"
                 type="submit"
+                disabled={submitting}
+                style={{ opacity: submitting ? 0.6 : 1 }}
               >
-                Book a consultation <Arrow />
+                {submitting ? "Sending..." : "Book a consultation"} <Arrow />
               </button>
               {submitted && (
                 <p className="form-success" role="status">
-                  Thank you. Your request has been recorded for this demo.
+                  Thank you. We've received your request and will reply within two business days.
+                </p>
+              )}
+              {submitError && (
+                <p className="field-error" role="alert">
+                  {submitError}
                 </p>
               )}
             </form>
@@ -1236,6 +1514,751 @@ function TermsPage({ navigate }: { navigate: Navigate }) {
   )
 }
 
+function ScrapingPage({ navigate }: { navigate: (path: string) => void }) {
+  const [leaving, setLeaving] = useState(false)
+
+  function leavePage(event: React.MouseEvent<HTMLAnchorElement>, destination: string) {
+    event.preventDefault()
+    if (leaving) return
+    setLeaving(true)
+    window.setTimeout(() => {
+      navigate(destination)
+    }, 420)
+  }
+
+  return (
+    <div className={`site-shell consultation-shell${leaving ? " is-leaving" : ""}`}>
+      <header className="site-header consultation-header">
+        <a href="/" className="wordmark" aria-label="Quoin home" onClick={(event) => leavePage(event, "/")}>
+          Quoin<span>®</span>
+        </a>
+        <span className="consultation-header-label">Web Scraping</span>
+        <a href="/" className="header-cta" onClick={(event) => leavePage(event, "/")}>
+          Back to home
+        </a>
+      </header>
+
+      <main className="scraping-page" style={{ padding: "120px 24px", maxWidth: "1200px", margin: "0 auto" }}>
+        {/* 1. Hero Section */}
+        <section className="hero section-frame" style={{ borderBottom: "1px solid var(--border)", paddingBottom: "80px", marginBottom: "80px" }}>
+          <div className="hero-grid">
+            <div className="hero-text">
+              <h1>
+                Web Scraping &<br />
+                Data Extraction
+              </h1>
+              <p style={{ fontSize: "1.25rem", marginTop: "1rem", color: "var(--ink-light)" }}>Turn publicly available web data into clean, structured, usable information.</p>
+              <div className="hero-actions" style={{ marginTop: "2rem" }}>
+                <a href="/consultation" className="button button-acid" onClick={(e) => leavePage(e, "/consultation")}>
+                  Start a Project <Arrow />
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 2. What We Do */}
+        <section className="section-frame text-section" style={{ marginBottom: "80px" }}>
+          <div className="section-meta">
+            <span>01 — What We Do</span>
+          </div>
+          <h2>Extract. Structure. Deliver.</h2>
+          <p style={{ maxWidth: "600px", fontSize: "1.125rem", marginTop: "1rem" }}>We collect and transform web data into organized datasets tailored to your requirements — from individual pages to large-scale websites.</p>
+        </section>
+
+        {/* 3. Services Grid */}
+        <section className="section-frame services-grid-section" style={{ marginBottom: "80px" }}>
+          <div className="section-meta" style={{ marginBottom: "2rem" }}>
+            <span>02 — Services</span>
+          </div>
+          <div className="scraping-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
+            {[
+              { title: "Website Data Extraction", desc: "Extract specific information from websites and deliver it in a structured format." },
+              { title: "Dynamic Web Scraping", desc: "Collect data from JavaScript-powered and dynamically rendered websites." },
+              { title: "Web Crawling", desc: "Discover and collect information across multiple pages or entire websites." },
+              { title: "Adaptive Scraping", desc: "Build resilient extraction workflows that can handle changes in website structure." },
+              { title: "Browser-Based Scraping", desc: "Interact with websites through real browser environments when traditional requests aren't enough." },
+              { title: "API & Network Data", desc: "Capture publicly accessible data delivered through APIs and network requests." },
+              { title: "E-Commerce Scraping", desc: "Collect product details, pricing, availability, categories, ratings, and more." },
+              { title: "Custom Data Extraction", desc: "Define exactly what information you need and receive a scraper built around your requirements." },
+            ].map((s, idx) => (
+              <article key={s.title} className="scraping-card">
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                  <span style={{ fontSize: "1.125rem", fontFamily: "var(--mono)", color: "var(--ink-light)" }}>{String(idx + 1).padStart(2, '0')}</span>
+                  <h3 style={{ fontSize: "1.125rem", margin: 0 }}>{s.title}</h3>
+                </div>
+                <p style={{ color: "var(--ink-light)" }}>{s.desc}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* 4. What We Can Extract */}
+        <section className="section-frame extract-section" style={{ marginBottom: "80px" }}>
+          <div className="section-meta" style={{ marginBottom: "2rem" }}>
+            <span>03 — Capabilities</span>
+          </div>
+          <h2>What We Can Extract</h2>
+          <ul style={{ display: "flex", flexWrap: "wrap", gap: "12px", listStyle: "none", padding: 0, marginTop: "2rem" }}>
+            {["Products", "Prices", "Listings", "Business Data", "Reviews", "Ratings", "Articles", "News", "Directories", "Documentation", "Public Market Data", "Custom Fields"].map((item) => (
+              <li key={item} style={{ padding: "8px 16px", border: "1px solid var(--border)", borderRadius: "100px", fontSize: "0.875rem" }}>{item}</li>
+            ))}
+          </ul>
+        </section>
+
+        {/* 5 & 6. Scale and Delivery */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "48px", marginBottom: "80px" }}>
+          <section className="section-frame text-section">
+            <div className="section-meta">
+              <span>04 — Scale</span>
+            </div>
+            <h2>Built for Different Data Needs</h2>
+            <h3 style={{ marginTop: "1.5rem", fontSize: "1.25rem" }}>Single Page → Entire Website</h3>
+            <p style={{ marginTop: "0.5rem", color: "var(--ink-light)" }}>From extracting a handful of fields from one page to crawling thousands of pages, the workflow can be tailored to the scale of your project.</p>
+          </section>
+
+          <section className="section-frame text-section">
+            <div className="section-meta">
+              <span>05 — Format</span>
+            </div>
+            <h2>Data Delivery</h2>
+            <h3 style={{ marginTop: "1.5rem", fontSize: "1.25rem" }}>Your Data. Your Format.</h3>
+            <p style={{ marginTop: "0.5rem", color: "var(--ink-light)" }}>Deliver extracted information in formats that fit your workflow.</p>
+            <div style={{ marginTop: "1rem", fontFamily: "var(--mono)", fontSize: "0.875rem", padding: "12px", background: "var(--ink)", color: "var(--paper)", borderRadius: "8px" }}>
+              JSON · CSV · XML · JSONL · Markdown · HTML
+            </div>
+          </section>
+        </div>
+
+        {/* 7 & 8. AI-Ready and Use Cases */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "48px", marginBottom: "80px" }}>
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>06 — AI</span></div>
+            <h2>Turn the Web Into AI-Ready Knowledge</h2>
+            <p style={{ marginTop: "1rem", color: "var(--ink-light)" }}>Collect, clean, and structure web content for modern AI workflows.</p>
+            <ul style={{ marginTop: "1rem", paddingLeft: "1.5rem", color: "var(--ink-light)" }}>
+              <li>RAG datasets</li>
+              <li>Knowledge bases</li>
+              <li>LLM-ready content</li>
+              <li>Website-to-Markdown</li>
+              <li>Structured AI data</li>
+            </ul>
+          </section>
+
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>07 — Use Cases</span></div>
+            <h2>Built for Real-World Data Collection</h2>
+            <ul style={{ marginTop: "1rem", paddingLeft: "1.5rem", color: "var(--ink-light)" }}>
+              <li>Competitor research</li>
+              <li>Price intelligence</li>
+              <li>Market research</li>
+              <li>Product catalog collection</li>
+              <li>Business research</li>
+              <li>Content aggregation</li>
+              <li>Lead data collection</li>
+              <li>Research & analytics</li>
+            </ul>
+          </section>
+        </div>
+
+        {/* 9. How It Works */}
+        <section className="section-frame process-section" style={{ marginBottom: "80px", background: "var(--ink)", color: "var(--paper)", padding: "48px", borderRadius: "16px" }}>
+          <div className="section-meta" style={{ color: "var(--paper)" }}>
+            <span>08 — How It Works</span>
+          </div>
+          <div className="process-layout" style={{ marginTop: "2rem" }}>
+            <h2 style={{ color: "var(--paper)" }}>4-Step Process</h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "32px", marginTop: "2rem" }}>
+              {[
+                { step: "01", title: "Define", desc: "Tell us what data you need." },
+                { step: "02", title: "Extract", desc: "We collect the required information from your target sources." },
+                { step: "03", title: "Structure", desc: "Raw information is cleaned and organized into usable data." },
+                { step: "04", title: "Deliver", desc: "Receive your dataset in the format you need." },
+              ].map((s) => (
+                <article key={s.step} style={{ borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: "16px" }}>
+                  <span style={{ fontFamily: "var(--mono)", color: "var(--acid)" }}>{s.step}</span>
+                  <h3 style={{ marginTop: "8px", fontSize: "1.125rem" }}>{s.title}</h3>
+                  <p style={{ marginTop: "4px", fontSize: "0.875rem", opacity: 0.8 }}>{s.desc}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 10. Custom Scraping & 11. Final CTA */}
+        <section className="section-frame cta-section" style={{ textAlign: "center", padding: "80px 0" }}>
+          <h2>Have Data You Need to Extract?</h2>
+          <p style={{ marginTop: "1rem", fontSize: "1.125rem", color: "var(--ink-light)", maxWidth: "600px", margin: "1rem auto 0" }}>
+            Every website is different. We can build a custom extraction workflow around your target website, required fields, output format, and scale. Tell us what you're looking for.
+          </p>
+          <div style={{ marginTop: "2rem" }}>
+            <a href="/consultation" className="button button-acid" onClick={(e) => leavePage(e, "/consultation")}>
+              Discuss Your Requirements <Arrow />
+            </a>
+          </div>
+        </section>
+        
+        <footer style={{ marginTop: "80px", paddingTop: "40px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", fontSize: "0.875rem" }}>
+          <a href="/" className="wordmark" onClick={(event) => leavePage(event, "/")}>
+            Quoin<span>®</span>
+          </a>
+          <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
+            Terms &amp; conditions
+          </a>
+          <a href="/" onClick={(event) => leavePage(event, "/")}>
+            Return home <Arrow />
+          </a>
+        </footer>
+      </main>
+    </div>
+  )
+}
+
+function KnowledgeAssistantPage({ navigate }: { navigate: (path: string) => void }) {
+  const [leaving, setLeaving] = useState(false)
+
+  function leavePage(event: React.MouseEvent<HTMLAnchorElement>, destination: string) {
+    event.preventDefault()
+    if (leaving) return
+    setLeaving(true)
+    window.setTimeout(() => {
+      navigate(destination)
+    }, 420)
+  }
+
+  const tagList = ["RAG", "Knowledge Bases", "AI Agents", "AI Workflows", "Document Processing", "Semantic Search", "Contextual Answers", "Multi-Model AI", "API Integration", "MCP", "Self-Hosted AI", "LLMOps", "Custom Tools", "Enterprise Knowledge", "AI Automation"]
+
+  return (
+    <div className={`site-shell consultation-shell${leaving ? " is-leaving" : ""}`}>
+      <header className="site-header consultation-header">
+        <a href="/" className="wordmark" aria-label="Quoin home" onClick={(event) => leavePage(event, "/")}>
+          Quoin<span>®</span>
+        </a>
+        <span className="consultation-header-label">Knowledge Assistant</span>
+        <a href="/" className="header-cta" onClick={(event) => leavePage(event, "/")}>
+          Back to home
+        </a>
+      </header>
+
+      <main className="scraping-page" style={{ padding: "120px 24px", maxWidth: "1200px", margin: "0 auto", animation: "slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)" }}>
+        {/* 1. Hero Section */}
+        <section className="hero section-frame" style={{ borderBottom: "1px solid var(--border)", paddingBottom: "80px", marginBottom: "80px" }}>
+          <div className="hero-grid">
+            <div className="hero-text" style={{ maxWidth: "800px" }}>
+              <h1>
+                Internal Knowledge<br />
+                Assistant
+              </h1>
+              <h2 style={{ fontSize: "1.5rem", marginTop: "1rem", fontWeight: 400 }}>Your company’s knowledge, available through a conversation.</h2>
+              <p style={{ fontSize: "1.125rem", marginTop: "1.5rem", color: "var(--ink-light)", lineHeight: 1.6 }}>
+                Turn internal documents, processes, policies, and knowledge into an AI-powered assistant that can answer questions, find information, and help your team get work done.
+              </p>
+              <div className="hero-actions" style={{ marginTop: "2.5rem" }}>
+                <a href="/consultation" className="button button-acid" style={{ transition: "transform 0.2s ease" }} onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.02)"} onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"} onClick={(e) => leavePage(e, "/consultation")}>
+                  Build Your Assistant <Arrow />
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 2. What We Build */}
+        <section className="section-frame text-section" style={{ marginBottom: "80px" }}>
+          <div className="section-meta">
+            <span>01 — What We Build</span>
+          </div>
+          <h2>One place for your team's knowledge</h2>
+          <p style={{ maxWidth: "600px", fontSize: "1.125rem", marginTop: "1rem" }}>
+            Connect your organization's knowledge sources and give your team a simple way to find the information they need.
+          </p>
+          <ul style={{ display: "flex", flexWrap: "wrap", gap: "12px", listStyle: "none", padding: 0, marginTop: "2rem" }}>
+            {["Internal documentation", "Company policies", "SOPs", "Employee handbooks", "Product documentation", "Technical documentation", "Project information", "Training materials", "FAQs", "Knowledge bases"].map((item, i) => (
+              <li key={item} style={{ padding: "8px 16px", border: "1px solid var(--border)", borderRadius: "100px", fontSize: "0.875rem", animation: `fadeIn 0.5s ease forwards ${i * 0.05}s`, opacity: 0 }}>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* 3. Core Features Grid */}
+        <section className="section-frame services-grid-section" style={{ marginBottom: "80px" }}>
+          <div className="section-meta" style={{ marginBottom: "2rem" }}>
+            <span>02 — Core Features</span>
+          </div>
+          <div className="scraping-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
+            {[
+              { title: "Knowledge Base", desc: "Centralize your organization's information into searchable knowledge bases." },
+              { title: "Intelligent Q&A", desc: "Ask questions naturally and receive answers based on your organization's knowledge." },
+              { title: "Document Understanding", desc: "Process and retrieve information from documents such as PDFs, presentations, and other supported formats." },
+              { title: "Context-Aware Responses", desc: "Give the assistant relevant context before generating an answer." },
+              { title: "Multiple Knowledge Sources", desc: "Organize information across different departments, projects, and knowledge collections." },
+              { title: "Source-Aware Answers", desc: "Provide references to the information used to generate an answer, helping users verify the response." },
+              { title: "Conversational Interface", desc: "Let employees interact with company knowledge through a familiar chat experience." },
+              { title: "Custom AI Models", desc: "Connect the assistant to the AI model that best fits your requirements." },
+            ].map((s, i) => (
+              <article key={s.title} style={{ padding: "24px", border: "1px solid var(--border)", borderRadius: "12px", background: "var(--paper)", transition: "all 0.3s ease", cursor: "default" }} onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 10px 20px rgba(0,0,0,0.05)" }} onMouseOut={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none" }}>
+                <h3 style={{ fontSize: "1.125rem", marginBottom: "8px" }}>{s.title}</h3>
+                <p style={{ color: "var(--ink-light)" }}>{s.desc}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* 4. What You Can Connect & 5. AI Workflows */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "48px", marginBottom: "80px" }}>
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>03 — Sources</span></div>
+            <h2>Bring Your Knowledge With You</h2>
+            <ul style={{ marginTop: "1rem", paddingLeft: "1.5rem", color: "var(--ink-light)" }}>
+              <li>PDF documents</li>
+              <li>Presentations</li>
+              <li>Text documents</li>
+              <li>FAQs</li>
+              <li>Internal documentation</li>
+              <li>Product manuals</li>
+              <li>Company policies</li>
+              <li>SOPs</li>
+              <li>Knowledge bases</li>
+              <li>Structured datasets</li>
+              <li>External data sources</li>
+            </ul>
+          </section>
+
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>04 — Workflows</span></div>
+            <h2>More Than Just Questions & Answers</h2>
+            <p style={{ marginTop: "1rem", color: "var(--ink-light)", marginBottom: "1rem" }}>Build automated AI workflows around your organization's knowledge.</p>
+            <ul style={{ paddingLeft: "1.5rem", color: "var(--ink-light)" }}>
+              <li>Document processing</li>
+              <li>Information retrieval</li>
+              <li>Content generation</li>
+              <li>Classification</li>
+              <li>Summarization</li>
+              <li>Data extraction</li>
+              <li>Multi-step AI workflows</li>
+              <li>Automated responses</li>
+              <li>Custom business logic</li>
+            </ul>
+          </section>
+        </div>
+
+        {/* 6. AI Agents & 7. Built for Teams */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "48px", marginBottom: "80px" }}>
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>05 — Agents</span></div>
+            <h2>Give Your Assistant the Ability to Act</h2>
+            <p style={{ marginTop: "1rem", color: "var(--ink-light)", marginBottom: "1rem" }}>Go beyond answering questions by connecting AI agents with tools and external services.</p>
+            <ul style={{ paddingLeft: "1.5rem", color: "var(--ink-light)" }}>
+              <li>Tool integration</li>
+              <li>API connections</li>
+              <li>Custom tools</li>
+              <li>MCP integrations</li>
+              <li>Multi-step tasks</li>
+              <li>Automated actions</li>
+              <li>External service integrations</li>
+            </ul>
+          </section>
+
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>06 — Teams</span></div>
+            <h2>One Assistant. Multiple Teams.</h2>
+            <p style={{ marginTop: "1rem", color: "var(--ink-light)", marginBottom: "1.5rem" }}>Create knowledge experiences for different parts of an organization.</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {[
+                { title: "HR", desc: "Policies, employee guidelines, onboarding and internal processes." },
+                { title: "Support", desc: "Product documentation, troubleshooting guides and FAQs." },
+                { title: "Engineering", desc: "Technical documentation, APIs, architecture and development knowledge." },
+                { title: "Sales", desc: "Product information, sales material and internal resources." },
+                { title: "Operations", desc: "SOPs, workflows, procedures and operational documentation." },
+                { title: "Management", desc: "Company information, reports and internal knowledge." },
+              ].map((t) => (
+                <div key={t.title} style={{ background: "var(--paper)", padding: "12px", borderLeft: "3px solid var(--acid)" }}>
+                  <strong style={{ display: "block", marginBottom: "4px" }}>{t.title}</strong>
+                  <span style={{ fontSize: "0.875rem", color: "var(--ink-light)" }}>{t.desc}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* 8, 9, 10, 11. Features Grid */}
+        <section className="section-frame process-section" style={{ marginBottom: "80px", background: "var(--ink)", color: "var(--paper)", padding: "48px", borderRadius: "16px" }}>
+          <div className="section-meta" style={{ color: "var(--paper)" }}>
+            <span>07 — Platform Capabilities</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "40px", marginTop: "2rem" }}>
+            <div>
+              <h3 style={{ color: "var(--acid)", marginBottom: "1rem" }}>AI Capabilities</h3>
+              <p style={{ opacity: 0.7, marginBottom: "1rem", fontSize: "0.875rem" }}>Adapt the Assistant to Your Business</p>
+              <ul style={{ paddingLeft: "1.5rem", fontSize: "0.875rem", opacity: 0.9 }}>
+                <li>Custom instructions</li><li>Prompt configuration</li><li>Multiple AI models</li><li>Context-aware generation</li><li>Structured outputs</li><li>Text generation</li><li>Summarization</li><li>Classification</li><li>Information extraction</li><li>AI-powered workflows</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style={{ color: "var(--acid)", marginBottom: "1rem" }}>Security & Control</h3>
+              <p style={{ opacity: 0.7, marginBottom: "1rem", fontSize: "0.875rem" }}>Keep Your Knowledge Under Control</p>
+              <ul style={{ paddingLeft: "1.5rem", fontSize: "0.875rem", opacity: 0.9 }}>
+                <li>Self-hosted deployment</li><li>Controlled knowledge access</li><li>Private data environment</li><li>Custom authentication</li><li>API-based integration</li><li>Configurable AI workflows</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style={{ color: "var(--acid)", marginBottom: "1rem" }}>Integrations</h3>
+              <p style={{ opacity: 0.7, marginBottom: "1rem", fontSize: "0.875rem" }}>Connect AI to Your Existing Stack</p>
+              <ul style={{ paddingLeft: "1.5rem", fontSize: "0.875rem", opacity: 0.9 }}>
+                <li>REST APIs</li><li>Internal applications</li><li>Business systems</li><li>Custom tools</li><li>External services</li><li>MCP servers</li><li>AI model providers</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style={{ color: "var(--acid)", marginBottom: "1rem" }}>Monitoring</h3>
+              <p style={{ opacity: 0.7, marginBottom: "1rem", fontSize: "0.875rem" }}>Understand How Your Assistant Performs</p>
+              <ul style={{ paddingLeft: "1.5rem", fontSize: "0.875rem", opacity: 0.9 }}>
+                <li>Conversation logs</li><li>Application monitoring</li><li>Performance analysis</li><li>Prompt improvement</li><li>Dataset improvement</li><li>Model evaluation</li><li>Production analytics</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* 12. Use Cases & 13. How It Works */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "48px", marginBottom: "80px" }}>
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>08 — Use Cases</span></div>
+            <h2>Built for Knowledge-Driven Organizations</h2>
+            <ul style={{ marginTop: "1rem", paddingLeft: "1.5rem", color: "var(--ink-light)" }}>
+              <li>Internal company assistant</li>
+              <li>Employee helpdesk</li>
+              <li>HR knowledge assistant</li>
+              <li>Customer support assistant</li>
+              <li>Technical documentation assistant</li>
+              <li>Product knowledge assistant</li>
+              <li>IT helpdesk</li>
+              <li>Training assistant</li>
+              <li>Research assistant</li>
+              <li>SOP assistant</li>
+              <li>Enterprise search</li>
+              <li>AI-powered knowledge base</li>
+            </ul>
+          </section>
+
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>09 — How It Works</span></div>
+            <h2>From Documents to Answers</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", marginTop: "2rem" }}>
+              {[
+                { step: "01", title: "Connect", desc: "Provide your organization's documents and knowledge sources." },
+                { step: "02", title: "Organize", desc: "Structure your information into searchable knowledge bases." },
+                { step: "03", title: "Understand", desc: "The system processes and indexes your knowledge for retrieval." },
+                { step: "04", title: "Ask", desc: "Employees interact with the assistant using natural language." },
+                { step: "05", title: "Answer", desc: "The assistant retrieves relevant information and generates a contextual response." },
+              ].map((s) => (
+                <div key={s.step} style={{ display: "flex", gap: "1rem" }}>
+                  <div style={{ fontFamily: "var(--mono)", color: "var(--acid)", fontSize: "1.25rem", fontWeight: 500 }}>{s.step}</div>
+                  <div>
+                    <h3 style={{ fontSize: "1.125rem", marginBottom: "4px" }}>{s.title}</h3>
+                    <p style={{ fontSize: "0.875rem", color: "var(--ink-light)" }}>{s.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* 14. Custom Knowledge Assistant & CTA */}
+        <section className="section-frame cta-section" style={{ textAlign: "center", padding: "80px 0", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+          <div className="section-meta" style={{ justifyContent: "center", marginBottom: "1.5rem" }}>
+            <span>10 — Get Started</span>
+          </div>
+          <h2>Built Around Your Organization</h2>
+          <p style={{ marginTop: "1rem", fontSize: "1.125rem", color: "var(--ink-light)", maxWidth: "700px", margin: "1rem auto 0" }}>
+            Every organization has different information, workflows, and requirements. We can configure an assistant around your knowledge sources, departments, user roles, AI models, business workflows, tools & integrations, access requirements, and existing applications.
+          </p>
+          <div style={{ marginTop: "2.5rem" }}>
+            <a href="/consultation" className="button button-acid" style={{ transition: "transform 0.2s ease" }} onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"} onClick={(e) => leavePage(e, "/consultation")}>
+              Build Your Knowledge Assistant <Arrow />
+            </a>
+          </div>
+        </section>
+
+        {/* Tags */}
+        <div style={{ marginTop: "40px", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px" }}>
+          {tagList.map(tag => (
+            <span key={tag} style={{ fontSize: "0.75rem", color: "var(--ink-light)", background: "rgba(0,0,0,0.03)", padding: "4px 10px", borderRadius: "4px" }}>
+              {tag}
+            </span>
+          ))}
+        </div>
+        
+        <footer style={{ marginTop: "80px", paddingTop: "40px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", fontSize: "0.875rem" }}>
+          <a href="/" className="wordmark" onClick={(event) => leavePage(event, "/")}>
+            Quoin<span>®</span>
+          </a>
+          <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
+            Terms &amp; conditions
+          </a>
+          <a href="/" onClick={(event) => leavePage(event, "/")}>
+            Return home <Arrow />
+          </a>
+        </footer>
+      </main>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}} />
+    </div>
+  )
+}
+
+function SeoPage({ navigate }: { navigate: (path: string) => void }) {
+  const [leaving, setLeaving] = useState(false)
+  const [activeIntent, setActiveIntent] = useState(0)
+
+  function leavePage(event: React.MouseEvent<HTMLAnchorElement>, destination: string) {
+    event.preventDefault()
+    if (leaving) return
+    setLeaving(true)
+    window.setTimeout(() => {
+      navigate(destination)
+    }, 420)
+  }
+
+  const intents = [
+    { id: "keywords", icon: "01", label: "Find the right keywords", desc: "Research search terms, search volume, locations, and related keyword opportunities.", target: "Keyword Research" },
+    { id: "rankings", icon: "02", label: "Track rankings", desc: "Monitor how selected keywords perform in search results over time.", target: "Rank Tracking" },
+    { id: "competitors", icon: "03", label: "Analyze competitors", desc: "Explore competitor search visibility and SEO data.", target: "Competitor Insights" },
+    { id: "backlinks", icon: "04", label: "Understand backlinks", desc: "Analyze backlink information and discover links pointing to websites.", target: "Backlink Analysis" },
+    { id: "audit", icon: "05", label: "Audit my website", desc: "Find technical and SEO issues across your website.", target: "Site Audit" },
+    { id: "ai", icon: "06", label: "Measure AI visibility", desc: "Research how your brand appears in AI-generated search answers.", target: "AI Visibility" },
+  ]
+
+  const tagList = ["Keyword Research", "Rank Tracking", "Competitor Insights", "Backlinks", "Site Audits", "AI Visibility", "Local SEO", "SERP Research", "Google Search Console", "Google Analytics", "MCP", "AI Agents", "Prompt Tracking", "Citation Tracking", "SEO Reports"]
+
+  return (
+    <div className={`site-shell consultation-shell${leaving ? " is-leaving" : ""}`}>
+      <header className="site-header consultation-header">
+        <a href="/" className="wordmark" aria-label="Quoin home" onClick={(event) => leavePage(event, "/")}>
+          Quoin<span>®</span>
+        </a>
+        <span className="consultation-header-label">SEO & Search</span>
+        <a href="/" className="header-cta" onClick={(event) => leavePage(event, "/")}>
+          Back to home
+        </a>
+      </header>
+
+      <main className="scraping-page" style={{ padding: "120px 24px", maxWidth: "1200px", margin: "0 auto", animation: "slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)" }}>
+        {/* 1. Hero Section */}
+        <section className="hero section-frame" style={{ borderBottom: "1px solid var(--border)", paddingBottom: "80px", marginBottom: "80px" }}>
+          <div className="hero-grid">
+            <div className="hero-text" style={{ maxWidth: "800px" }}>
+              <h1>
+                SEO & Search<br />
+                Visibility
+              </h1>
+              <h2 style={{ fontSize: "1.5rem", marginTop: "1rem", fontWeight: 400 }}>Understand Search. Improve Visibility.</h2>
+              <p style={{ fontSize: "1.125rem", marginTop: "1.5rem", color: "var(--ink-light)", lineHeight: 1.6 }}>
+                Research keywords, track rankings, audit websites, analyze competitors, monitor backlinks, and understand how your brand appears across AI search.
+              </p>
+              <div className="hero-actions" style={{ marginTop: "2.5rem" }}>
+                <a href="/consultation" className="button button-acid" style={{ transition: "transform 0.2s ease" }} onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.02)"} onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"} onClick={(e) => leavePage(e, "/consultation")}>
+                  Explore SEO Solutions <Arrow />
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 2. Interactive Needs Section */}
+        <section className="section-frame text-section" style={{ marginBottom: "80px" }}>
+          <div className="section-meta">
+            <span>01 — What do you want to improve?</span>
+          </div>
+          <h2>Select your primary goal</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px", marginTop: "2rem" }}>
+            {intents.map((intent, i) => (
+              <button
+                key={intent.id}
+                onClick={() => setActiveIntent(i)}
+                style={{
+                  textAlign: "left", padding: "20px", borderRadius: "12px", border: `2px solid ${activeIntent === i ? "var(--ink)" : "var(--border)"}`,
+                  background: activeIntent === i ? "var(--paper)" : "transparent", cursor: "pointer", transition: "all 0.2s ease"
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                  <span style={{ fontSize: "1.125rem", fontFamily: "var(--mono)", color: "var(--ink-light)" }}>{intent.icon}</span>
+                  <strong style={{ fontSize: "1.125rem" }}>{intent.label}</strong>
+                </div>
+                <p style={{ color: "var(--ink-light)", fontSize: "0.875rem" }}>{intent.desc}</p>
+                <div style={{
+                  display: "grid",
+                  gridTemplateRows: activeIntent === i ? "1fr" : "0fr",
+                  transition: "grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                }}>
+                  <div style={{ overflow: "hidden" }}>
+                    <div style={{ 
+                      paddingTop: "12px", color: "var(--ink)", fontWeight: 500, fontSize: "0.875rem", display: "flex", alignItems: "center", gap: "4px",
+                      opacity: activeIntent === i ? 1 : 0,
+                      transform: activeIntent === i ? "translateY(0)" : "translateY(-8px)",
+                      transition: "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                    }}>
+                      Go to: {intent.target} <Arrow diagonal />
+                    </div>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* 3. Core SEO Services Grid */}
+        <section className="section-frame process-section" style={{ marginBottom: "80px", background: "var(--ink)", color: "var(--paper)", padding: "48px", borderRadius: "16px" }}>
+          <div className="section-meta" style={{ color: "var(--paper)" }}>
+            <span>02 — Core SEO Services</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "40px", marginTop: "2rem" }}>
+            {[
+              { title: "Keyword Research", desc: "Discover keywords worth targeting and research their search data.", items: ["Keyword discovery & grouping", "Search volume & metrics", "Location-based research", "City & regional targeting", "Related opportunities", "Deeper SERP results"] },
+              { title: "Rank Tracking", desc: "Keep track of your website's position for selected keywords.", items: ["Keyword position tracking", "Ranking history & comparisons", "Multiple keywords", "Location-specific rankings", "Scheduled rank checks", "Keyword pinning"] },
+              { title: "Competitor Insights", desc: "Understand how competitors are performing in search.", items: ["Competitor research", "Search visibility comparison", "Competitor keyword research", "Competitor SEO analysis", "Competitive search insights"] },
+              { title: "Backlink Analysis", desc: "Understand the backlink profile of a website.", items: ["Backlink discovery", "Backlink analysis", "Recently discovered backlinks", "Link profile research", "Backlink comparisons"] },
+              { title: "Website SEO Audits", desc: "Analyze your website for technical SEO issues.", items: ["Site crawling & page analysis", "SEO issue detection", "Robots & meta checks", "JavaScript-rendered auditing", "Audit reports"] },
+              { title: "AI Visibility", desc: "See how your brand appears in AI search.", items: ["Brand mention tracking", "Prompt tracking", "ChatGPT & Gemini results", "Google AI Overviews", "Citation tracking"] }
+            ].map((s, idx) => (
+              <div key={s.title} className={`seo-card ${activeIntent === idx ? "is-active" : ""}`} style={{ background: "rgba(255,255,255,0.05)", padding: "24px", borderRadius: "12px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "1rem" }}>
+                  <span style={{ fontSize: "1.125rem", fontFamily: "var(--mono)", color: "var(--acid)" }}>{String(idx + 1).padStart(2, '0')}</span>
+                  <h3 style={{ color: "var(--acid)", margin: 0 }}>{s.title}</h3>
+                </div>
+                <p style={{ opacity: 0.8, marginBottom: "1rem", fontSize: "0.875rem" }}>{s.desc}</p>
+                <ul style={{ paddingLeft: "1.5rem", fontSize: "0.875rem", opacity: 0.9 }}>
+                  {s.items.map(item => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 4. Local SEO & Search Data */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "48px", marginBottom: "80px" }}>
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>03 — Local SEO</span></div>
+            <h2>Understand Search by Location</h2>
+            <p style={{ marginTop: "1rem", color: "var(--ink-light)" }}>Use location-specific SEO research for:</p>
+            <ul style={{ marginTop: "1rem", paddingLeft: "1.5rem", color: "var(--ink-light)" }}>
+              <li>Cities, Counties, Countries</li>
+              <li>Local search queries & rankings</li>
+              <li>Business profiles</li>
+              <li>Reviews & Posts</li>
+              <li>Categories</li>
+              <li>Local rank grids</li>
+            </ul>
+          </section>
+
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>04 — Integration</span></div>
+            <h2>Google Search Data</h2>
+            <p style={{ marginTop: "1rem", color: "var(--ink-light)" }}>Connect performance data directly into workflows:</p>
+            <ul style={{ marginTop: "1rem", paddingLeft: "1.5rem", color: "var(--ink-light)" }}>
+              <li>Google Search Console</li>
+              <li>Search performance data</li>
+              <li>Discover data</li>
+              <li>Google News data</li>
+              <li>Google Analytics data</li>
+              <li>Organic traffic information</li>
+            </ul>
+          </section>
+        </div>
+
+        {/* 5. SEO + AI & Reports */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "48px", marginBottom: "80px" }}>
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>05 — SEO + AI</span></div>
+            <h2>Make SEO Data Available to AI</h2>
+            <p style={{ marginTop: "1rem", color: "var(--ink-light)", marginBottom: "1rem" }}>We expose SEO data through MCP so compatible AI agents can use the data directly.</p>
+            <ul style={{ paddingLeft: "1.5rem", color: "var(--ink-light)" }}>
+              <li>AI-assisted keyword research</li>
+              <li>AI-assisted SEO audits</li>
+              <li>SEO research through an AI agent</li>
+              <li>Automated SEO workflows</li>
+              <li>Search Console & Analytics via MCP</li>
+              <li>Custom agent workflows</li>
+            </ul>
+          </section>
+
+          <section className="section-frame text-section">
+            <div className="section-meta"><span>06 — Reporting</span></div>
+            <h2>Turn SEO Data Into Actionable Reports</h2>
+            <p style={{ marginTop: "1rem", color: "var(--ink-light)", marginBottom: "1rem" }}>Deliver extracted information in beautiful formats.</p>
+            <ul style={{ paddingLeft: "1.5rem", color: "var(--ink-light)" }}>
+              <li>SEO audit reports</li>
+              <li>Saved reports</li>
+              <li>Reusable report templates</li>
+              <li>Project-based reports</li>
+              <li>Exportable reports</li>
+              <li>AI-generated SEO reports</li>
+            </ul>
+          </section>
+        </div>
+
+        {/* Implementation Note */}
+        <div style={{ background: "var(--surface)", padding: "24px", borderRadius: "12px", border: "1px solid var(--border)", marginBottom: "80px", display: "flex", gap: "16px", alignItems: "flex-start" }}>
+          <div>
+            <h4 style={{ marginBottom: "8px" }}>Important Implementation Note</h4>
+            <p style={{ fontSize: "0.875rem", color: "var(--ink-light)", lineHeight: 1.5 }}>
+              OpenSEO requires a DataForSEO API key to obtain SEO data when self-hosted. All workflows rely on this underlying data provider to function correctly.
+            </p>
+          </div>
+        </div>
+
+        {/* Final CTA */}
+        <section className="section-frame cta-section" style={{ textAlign: "center", padding: "80px 0", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+          <div className="section-meta" style={{ justifyContent: "center", marginBottom: "1.5rem" }}>
+            <span>07 — Get Started</span>
+          </div>
+          <h2>Ready to improve your visibility?</h2>
+          <div style={{ marginTop: "2.5rem" }}>
+            <a href="/consultation" className="button button-acid" style={{ transition: "transform 0.2s ease" }} onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"} onClick={(e) => leavePage(e, "/consultation")}>
+              Discuss Your SEO Needs <Arrow />
+            </a>
+          </div>
+        </section>
+
+        {/* Tags */}
+        <div style={{ marginTop: "40px", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px" }}>
+          {tagList.map(tag => (
+            <span key={tag} style={{ fontSize: "0.75rem", color: "var(--ink-light)", background: "rgba(0,0,0,0.03)", padding: "4px 10px", borderRadius: "4px" }}>
+              {tag}
+            </span>
+          ))}
+        </div>
+        
+        <footer style={{ marginTop: "80px", paddingTop: "40px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", fontSize: "0.875rem" }}>
+          <a href="/" className="wordmark" onClick={(event) => leavePage(event, "/")}>
+            Quoin<span>®</span>
+          </a>
+          <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
+            Terms &amp; conditions
+          </a>
+          <a href="/" onClick={(event) => leavePage(event, "/")}>
+            Return home <Arrow />
+          </a>
+        </footer>
+      </main>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}} />
+    </div>
+  )
+}
+
 export default function App() {
   const [route, setRoute] = useState(window.location.pathname)
 
@@ -1255,13 +2278,17 @@ export default function App() {
     setRoute(path)
   }
 
-  const isModalOpen = route === "/consultation" || route === "/terms"
+  const isModalOpen = route === "/consultation" || route === "/terms" || route === "/scraping" || route === "/knowledge-assistant" || route === "/seo"
 
   return (
     <>
       <HomePage navigate={navigate} isBackground={isModalOpen} />
+      {route === "/seo" && <SeoPage navigate={navigate} />}
+      {route === "/knowledge-assistant" && <KnowledgeAssistantPage navigate={navigate} />}
+      {route === "/scraping" && <ScrapingPage navigate={navigate} />}
       {route === "/consultation" && <ConsultationPage navigate={navigate} />}
       {route === "/terms" && <TermsPage navigate={navigate} />}
+      <Chatbot navigate={navigate} />
     </>
   )
 }
