@@ -160,36 +160,21 @@ function Chatbot({ navigate }: { navigate: (path: string) => void }) {
         body: JSON.stringify({ message: userText, history: currentHistory })
       })
       const data = await res.json()
-      let botText = data.text || "I'm having trouble connecting to my brain right now. Try again later!"
+      
+      if (!res.ok || data.error) {
+        setMessages((prev) => [...prev, { role: "bot", text: data.error || "I'm having trouble connecting to my brain right now. Try again later!", action: "book_consultation" }])
+        return
+      }
+
+      let botText = data.response || "I couldn't process that properly."
       let action = undefined
 
-      const leadMatch = botText.match(/\[SUBMIT_LEAD\]\s*(\{.*?\})/s)
-      if (leadMatch) {
-        try {
-          const leadData = JSON.parse(leadMatch[1])
-          const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwNW360QUZrhZFVtVYwsOUNem5_8eXQB66Ko-qSxOdoZnnVJlTJVsjimE8ditj8WzfYBA/exec"
-          
-          fetch(GOOGLE_SHEET_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: leadData.name || "Chat Lead",
-              email: leadData.email || "",
-              phone: leadData.phone || "",
-              service: leadData.service || "General Chat Inquiry",
-              message: leadData.message || "",
-              timestamp: new Date().toISOString(),
-            }),
-          }).catch(console.error)
-          
-          botText = botText.replace(leadMatch[0], "").trim()
-          botText += "\n\n(I've successfully submitted your requirements to our team! We will be in touch shortly.)"
-        } catch (err) {
-          console.error("Failed to parse lead data:", err)
-        }
-      } else if (botText.includes("[BOOK_CONSULTATION]")) {
-        botText = botText.replace("[BOOK_CONSULTATION]", "").trim()
+      if (data.action === "SUBMIT_LEAD" && data.lead) {
+        // Securely handled by the backend edge function now!
+        botText += "\n\n*(I've successfully submitted your requirements to our team! We will be in touch shortly.)*"
+      } else if (data.duplicateLead) {
+        botText += "\n\n*(Your requirements have already been submitted. We'll be in touch soon!)*"
+      } else if (data.action === "BOOK_CONSULTATION") {
         action = "book_consultation"
       }
       

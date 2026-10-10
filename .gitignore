@@ -25,3 +25,5 @@ pnpm-debug.log*
 Thumbs.db
 *.tsbuildinfo
 vite.config.*.timestamp-*
+.vercel
+.env*

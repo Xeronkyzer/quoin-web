@@ -296,17 +296,27 @@ export default async function handler(
   // --- SECURITY: CORS & Origin Validation ---
   // In production, we MUST verify the request comes from our actual frontend domain.
   // Otherwise, an attacker can host a form on their site and drain our Gemini API quota.
-  const allowedOrigins = [
-    "http://localhost:5173", 
+  const allowedOrigins = new Set([
+    "http://localhost:5173",
     "http://localhost:3000",
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "", // Automatic Vercel deployment URL
+    "http://localhost:3001",
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
     "https://quoin.example.com", // TODO: Update with actual production domain
-  ].filter(Boolean);
+  ].filter(Boolean));
 
-  const origin = req.headers.origin || req.headers.referer;
+  let origin = req.headers.origin;
+  if (!origin && req.headers.referer) {
+    try {
+      origin = new URL(req.headers.referer).origin;
+    } catch {
+      origin = undefined;
+    }
+  }
   
+  const isAllowed = origin && (allowedOrigins.has(origin) || origin.endsWith(".vercel.app"));
+
   // Set CORS headers
-  res.setHeader("Access-Control-Allow-Origin", origin && allowedOrigins.some(o => origin.startsWith(o)) ? origin : allowedOrigins[0]!);
+  res.setHeader("Access-Control-Allow-Origin", isAllowed ? origin : [...allowedOrigins][0]!);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
@@ -314,8 +324,8 @@ export default async function handler(
     return res.status(200).end();
   }
 
-  // Enforce Origin
-  if (origin && !allowedOrigins.some(o => origin.startsWith(o))) {
+  // Enforce Origin Security
+  if (origin && !isAllowed) {
     console.warn(`[SECURITY] Blocked cross-origin request from: ${origin}`);
     return res.status(403).json({ error: "Forbidden: Invalid Origin." });
   }
@@ -396,6 +406,26 @@ export default async function handler(
     const duplicateLead = lead ? await isDuplicateLead(ip, lead) : false;
 
     if (lead && !duplicateLead) {
+      // Secure Backend Lead Submission
+      const GOOGLE_SHEET_URL = process.env.GOOGLE_SHEET_URL || "https://script.google.com/macros/s/AKfycbwNW360QUZrhZFVtVYwsOUNem5_8eXQB66Ko-qSxOdoZnnVJlTJVsjimE8ditj8WzfYBA/exec";
+      
+      try {
+        await fetch(GOOGLE_SHEET_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: lead.name || "Chat Lead",
+            email: lead.email || "",
+            phone: lead.phone || "",
+            service: lead.service || "General Chat Inquiry",
+            message: lead.message || "",
+            timestamp: new Date().toISOString(),
+          }),
+        });
+      } catch (err) {
+        console.error("Failed to securely forward lead to Google Sheets:", err);
+      }
+
       return res.status(200).json({
         response,
         message: response,
