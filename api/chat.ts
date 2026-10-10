@@ -15,7 +15,7 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 10;
 const LEAD_DEDUPLICATION_MS = 20 * 60_000;
 
-const MODEL = "gemini-2.5-flash-lite";
+const MODEL = "gemini-3.5-flash-lite";
 
 const systemInstruction = `
 You are the website's professional sales consultant. Your goal is to understand a visitor's need, recommend the right service, qualify genuine opportunities, communicate honestly, and move qualified visitors toward a quote or consultation.
