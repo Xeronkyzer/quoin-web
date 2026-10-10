@@ -2,6 +2,7 @@ import {
   FormEvent,
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
+  TouchEvent as ReactTouchEvent,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -142,8 +143,8 @@ function useScrollReveal() {
         })
       },
       {
-        threshold: 0.12,
-        rootMargin: "0px 0px -7% 0px",
+        threshold: 0.04,
+        rootMargin: "0px 0px -40px 0px",
       },
     )
 
@@ -244,7 +245,85 @@ function HomePage({
     })
   }
 
+  useEffect(() => {
+    let ticking = false
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const heroEl = document.querySelector<HTMLElement>(".hero")
+          if (heroEl) {
+            const scrollY = window.scrollY
+            if (scrollY < window.innerHeight * 1.5) {
+              heroEl.style.setProperty("--hero-scroll-y", `${scrollY * 0.12}px`)
+              heroEl.style.setProperty("--hero-ghost-scroll-y", `${scrollY * -0.22}px`)
+              heroEl.style.setProperty("--hero-ghost-scroll-x", `${scrollY * 0.08}px`)
+            }
+          }
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
   function resetHero(event: ReactPointerEvent<HTMLElement>) {
+    if (heroRafRef.current !== null) {
+      cancelAnimationFrame(heroRafRef.current)
+      heroRafRef.current = null
+    }
+    heroCoordsRef.current = null
+    heroBoundsRef.current = null
+    const target = event.currentTarget
+    target.style.setProperty("--hero-note-x", "0px")
+    target.style.setProperty("--hero-note-y", "0px")
+    target.style.setProperty("--hero-title-x", "0px")
+    target.style.setProperty("--hero-title-y", "0px")
+    target.style.setProperty("--hero-ghost-x", "0px")
+    target.style.setProperty("--hero-ghost-y", "0px")
+  }
+
+  function onTouchMoveHero(event: ReactTouchEvent<HTMLElement>) {
+    if (event.touches.length > 0) {
+      const touch = event.touches[0]
+      heroCoordsRef.current = { clientX: touch.clientX, clientY: touch.clientY }
+      heroTargetRef.current = event.currentTarget
+
+      if (heroRafRef.current !== null) return
+
+      heroRafRef.current = requestAnimationFrame(() => {
+        heroRafRef.current = null
+        const target = heroTargetRef.current
+        const coords = heroCoordsRef.current
+        if (!target || !coords) return
+
+        let bounds = heroBoundsRef.current
+        if (!bounds) {
+          const rect = target.getBoundingClientRect()
+          bounds = {
+            left: rect.left,
+            top: rect.top,
+            width: rect.width || 1,
+            height: rect.height || 1,
+          }
+          heroBoundsRef.current = bounds
+        }
+
+        const x = (coords.clientX - bounds.left) / bounds.width - 0.5
+        const y = (coords.clientY - bounds.top) / bounds.height - 0.5
+        target.style.setProperty("--hero-note-x", `${x * -10}px`)
+        target.style.setProperty("--hero-note-y", `${y * -7}px`)
+        target.style.setProperty("--hero-title-x", `${x * 6}px`)
+        target.style.setProperty("--hero-title-y", `${y * 4}px`)
+        target.style.setProperty("--hero-ghost-x", `${x * 20}px`)
+        target.style.setProperty("--hero-ghost-y", `${y * 10}px`)
+      })
+    }
+  }
+
+  function resetHeroTouch(event: ReactTouchEvent<HTMLElement>) {
     if (heroRafRef.current !== null) {
       cancelAnimationFrame(heroRafRef.current)
       heroRafRef.current = null
@@ -318,6 +397,8 @@ function HomePage({
           onPointerEnter={onPointerEnterHero}
           onPointerMove={moveHero}
           onPointerLeave={resetHero}
+          onTouchMove={onTouchMoveHero}
+          onTouchEnd={resetHeroTouch}
         >
           <div className="section-meta">
             <span>Independent managed services</span>
