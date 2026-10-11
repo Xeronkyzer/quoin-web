@@ -4960,9 +4960,334 @@ footer .arrow-icon {
   color: var(--acid, #efff3f) !important;
 }
 
-@media (max-width: 640px) {
+/* ==========================================================================
+   SEO & Search Intelligence Mobile Responsive Optimization
+   ========================================================================== */
+@media (max-width: 768px) {
+  .seo-page .knowledge-hero {
+    padding: 38px 20px 48px;
+  }
+
+  .seo-page .knowledge-hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .seo-page .knowledge-hero-grid h1 {
+    font-size: clamp(34px, 8.5vw, 48px);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+    word-break: break-word;
+  }
+
+  .seo-page .knowledge-hero-grid h2 {
+    font-size: 17px;
+    line-height: 1.4;
+    margin-bottom: 16px;
+  }
+
+  .seo-page .knowledge-hero-grid p {
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+
+  .seo-page .knowledge-hero-grid > div > a {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    margin-top: 24px;
+    box-shadow: 3px 3px 0 #11110f;
+  }
+
+  .seo-serp-widget {
+    padding: 16px 14px;
+    box-shadow: 6px 6px 0 var(--acid, #efff3f);
+    margin-right: 4px;
+  }
+
+  .seo-serp-widget:hover {
+    transform: none;
+    box-shadow: 6px 6px 0 var(--acid, #efff3f);
+  }
+
+  .seo-serp-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+  }
+
+  .seo-engine-pills {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    width: 100%;
+  }
+
+  .seo-engine-btn {
+    text-align: center;
+    padding: 6px 2px;
+    font-size: 9px;
+  }
+
+  .seo-keyword-tabs {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  .seo-keyword-btn {
+    scroll-snap-align: start;
+    padding: 6px 8px;
+    font-size: 9.5px;
+  }
+
+  .seo-search-bar-sim {
+    padding: 6px 10px;
+    margin-bottom: 10px;
+  }
+
+  .seo-search-bar-sim span {
+    font-size: 9.5px;
+  }
+
   .seo-metrics-ribbon {
     grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .seo-metric-box {
+    padding: 7px 8px;
+  }
+
+  .seo-metric-box small {
+    font-size: 7.5px;
+  }
+
+  .seo-metric-box strong {
+    font-size: 11.5px;
+  }
+
+  .seo-serp-preview-card {
+    padding: 12px 10px;
+    margin-bottom: 12px;
+  }
+
+  .seo-serp-headline {
+    font-size: 13px;
+    line-height: 1.35;
+    margin-bottom: 5px;
+  }
+
+  .seo-serp-snippet {
+    font-size: 11px;
+    line-height: 1.45;
+    margin-bottom: 8px;
+  }
+
+  .seo-aio-box {
+    padding: 8px 10px;
+    font-size: 10.5px;
+    margin-bottom: 8px;
+  }
+
+  .seo-serp-cta {
+    width: 100%;
+    min-height: 46px;
+    font-size: 10px;
+    padding: 0 12px;
+  }
+
+  .seo-page .knowledge-section {
+    padding: 44px 20px;
+  }
+
+  .seo-page .knowledge-dark-section {
+    padding: 48px 20px;
+  }
+
+  .seo-page .knowledge-split h2,
+  .seo-page .knowledge-heading-row h2 {
+    font-size: clamp(26px, 7vw, 36px);
+    line-height: 1.1;
+  }
+
+  .seo-page .knowledge-feature-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .seo-page .knowledge-feature-grid article {
+    padding: 20px 16px;
+  }
+
+  .seo-page .knowledge-dark-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .seo-page .knowledge-dark-list li {
+    padding: 10px 12px;
+    font-size: 10.5px;
+  }
+
+  .seo-page .knowledge-team-grid {
+    grid-template-columns: 1fr;
+    border-right: 1px solid var(--line, #d3d3cd);
+  }
+
+  .seo-page .knowledge-team-grid article {
+    min-height: auto;
+    padding: 20px 16px;
+  }
+
+  .seo-page .knowledge-process-grid {
+    grid-template-columns: 1fr;
+    border-right: 1px solid var(--line, #d3d3cd);
+  }
+
+  .seo-page .knowledge-process-grid article {
+    padding: 20px 16px;
+  }
+
+  .seo-page .knowledge-custom-section {
+    padding: 48px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .seo-page .knowledge-custom-section h2 {
+    font-size: clamp(28px, 7.5vw, 40px);
+    line-height: 1.05;
+  }
+
+  .seo-page .knowledge-custom-section a {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+
+  .seo-page .knowledge-custom-list {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .seo-page .knowledge-custom-list li {
+    padding: 12px 14px;
+    font-size: 11.5px;
+  }
+
+  .seo-page .scraping-footer {
+    padding: 32px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+}
+
+/* Extra Compact Phones (iPhone SE, Galaxy S8, etc. <= 480px) */
+@media (max-width: 480px) {
+  .seo-page .knowledge-hero {
+    padding-top: 28px;
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .seo-page .knowledge-hero-grid h1 {
+    font-size: clamp(28px, 9vw, 38px);
+    letter-spacing: -0.04em;
+  }
+
+  .seo-serp-widget {
+    padding: 12px 10px;
+    box-shadow: 4px 4px 0 var(--acid, #efff3f);
+  }
+
+  .seo-serp-widget:hover {
+    box-shadow: 4px 4px 0 var(--acid, #efff3f);
+  }
+
+  .seo-engine-btn {
+    font-size: 8px;
+    padding: 5px 2px;
+    letter-spacing: 0.02em;
+  }
+
+  .seo-keyword-btn {
+    padding: 5px 7px;
+    font-size: 9px;
+  }
+
+  .seo-keyword-rank-pill {
+    font-size: 8px;
+    padding: 1px 4px;
+  }
+
+  .seo-search-bar-sim {
+    padding: 5px 8px;
+  }
+
+  .seo-search-bar-sim svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .seo-metrics-ribbon {
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  .seo-metric-box {
+    padding: 6px 7px;
+  }
+
+  .seo-metric-box small {
+    font-size: 7px;
+  }
+
+  .seo-metric-box strong {
+    font-size: 11px;
+  }
+
+  .seo-serp-preview-card {
+    padding: 10px 8px;
+  }
+
+  .seo-serp-headline {
+    font-size: 12px;
+  }
+
+  .seo-serp-snippet {
+    font-size: 10px;
+  }
+
+  .seo-serp-features {
+    gap: 3px;
+  }
+
+  .seo-feature-pill {
+    font-size: 8px;
+    padding: 2px 5px;
+  }
+
+  .seo-page .knowledge-dark-list {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-page .knowledge-tag-rail {
+    padding-right: 16px;
+    padding-left: 16px;
+    gap: 6px;
+  }
+
+  .seo-page .knowledge-tag-rail span {
+    padding: 5px 7px;
+    font-size: 7.5px;
   }
 }
 

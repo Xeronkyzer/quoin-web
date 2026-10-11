@@ -186,7 +186,7 @@ export function useSmoothScroll({ ease = 0.085 }: SmoothScrollOptions = {}) {
       const isInput =
         active instanceof HTMLInputElement ||
         active instanceof HTMLTextAreaElement ||
-        (active && active.isContentEditable)
+        (active instanceof HTMLElement && active.isContentEditable)
 
       if (isInput) return
 
