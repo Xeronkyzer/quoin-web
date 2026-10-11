@@ -1,33 +1,29 @@
 import { useEffect, useRef, useState } from "react"
 
 export function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement>(null)
-  const ringRef = useRef<HTMLDivElement>(null)
+  const followerRef = useRef<HTMLDivElement>(null)
   const [cursorText, setCursorText] = useState<string | null>(null)
   const [cursorState, setCursorState] = useState<
-    "default" | "hover" | "text" | "active" | "hidden"
+    "default" | "hover" | "input" | "text" | "active" | "hidden"
   >("default")
 
   useEffect(() => {
-    // Check if device supports hover and fine pointer (disable on touchscreen/mobile)
+    // Disable on touchscreen / mobile devices
     if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) {
       return
     }
 
-    document.body.classList.add("has-custom-cursor")
-
     let mouseX = -100
     let mouseY = -100
-    let ringX = -100
-    let ringY = -100
+    let followerX = -100
+    let followerY = -100
     let isVisible = false
     let isMouseDown = false
     let currentMagnetic: HTMLElement | null = null
     let rafId: number | null = null
 
-    const dot = dotRef.current
-    const ring = ringRef.current
-    if (!dot || !ring) return
+    const follower = followerRef.current
+    if (!follower) return
 
     // Linear interpolation for smooth trailing follower
     function lerp(start: number, end: number, factor: number) {
@@ -35,16 +31,12 @@ export function CustomCursor() {
     }
 
     function render() {
-      // Smoothly slide follower ring toward actual mouse position
-      ringX = lerp(ringX, mouseX, 0.16)
-      ringY = lerp(ringY, mouseY, 0.16)
+      // Smoothly slide follower dot toward actual mouse position (Cuberto fluid follower)
+      followerX = lerp(followerX, mouseX, 0.18)
+      followerY = lerp(followerY, mouseY, 0.18)
 
-      if (dot) {
-        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`
-      }
-
-      if (ring) {
-        ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`
+      if (follower) {
+        follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0)`
       }
 
       rafId = requestAnimationFrame(render)
@@ -52,19 +44,17 @@ export function CustomCursor() {
 
     rafId = requestAnimationFrame(render)
 
-    // Handle mouse movement
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX
       mouseY = e.clientY
 
       if (!isVisible) {
         isVisible = true
-        ringX = mouseX
-        ringY = mouseY
+        followerX = mouseX
+        followerY = mouseY
         setCursorState("default")
       }
 
-      // Check what element is under the cursor
       const target = e.target as HTMLElement | null
       if (!target) return
 
@@ -77,31 +67,40 @@ export function CustomCursor() {
         if (text) {
           setCursorText(text)
           setCursorState("text")
+          return
         }
       } else if (customCursorType) {
         const text = customCursorType.getAttribute("data-cursor")
         if (text && text !== "pointer") {
           setCursorText(text.toUpperCase())
           setCursorState("text")
-        } else {
-          setCursorText(null)
-          setCursorState("hover")
-        }
-      } else {
-        // 2. Check for standard interactive elements
-        const interactiveEl = target.closest<HTMLElement>(
-          'a, button, [role="button"], input, textarea, select, label, summary, [data-magnetic]',
-        )
-        if (interactiveEl) {
-          setCursorText(null)
-          setCursorState("hover")
-        } else {
-          setCursorText(null)
-          setCursorState(isMouseDown ? "active" : "default")
+          return
         }
       }
 
-      // 3. Handle Magnetic elements
+      // 2. Check for text inputs / chat inputs
+      const inputEl = target.closest<HTMLElement>(
+        "input, textarea, [contenteditable]",
+      )
+      if (inputEl) {
+        setCursorText(null)
+        setCursorState("input")
+        return
+      }
+
+      // 3. Check for clickable / interactive elements
+      const interactiveEl = target.closest<HTMLElement>(
+        'a, button, [role="button"], select, label, summary, [data-magnetic]',
+      )
+      if (interactiveEl) {
+        setCursorText(null)
+        setCursorState("hover")
+      } else {
+        setCursorText(null)
+        setCursorState(isMouseDown ? "active" : "default")
+      }
+
+      // 4. Handle magnetic elements
       const magneticEl = target.closest<HTMLElement>("[data-magnetic]")
       if (magneticEl) {
         if (currentMagnetic && currentMagnetic !== magneticEl) {
@@ -125,11 +124,9 @@ export function CustomCursor() {
       const strengthAttr = el.getAttribute("data-magnetic-strength")
       const strength = strengthAttr ? parseFloat(strengthAttr) : 0.35
 
-      // Translate magnetic container
       el.style.transform = `translate3d(${deltaX * strength}px, ${deltaY * strength}px, 0)`
       el.style.transition = "transform 0.12s cubic-bezier(0.16, 1, 0.3, 1)"
 
-      // Parallax inner elements with [data-magnetic-inner]
       const inner = el.querySelector<HTMLElement>("[data-magnetic-inner]")
       if (inner) {
         inner.style.transform = `translate3d(${deltaX * strength * 0.4}px, ${deltaY * strength * 0.4}px, 0)`
@@ -179,7 +176,6 @@ export function CustomCursor() {
     document.addEventListener("mouseenter", onMouseEnter)
 
     return () => {
-      document.body.classList.remove("has-custom-cursor")
       if (rafId) cancelAnimationFrame(rafId)
       window.removeEventListener("mousemove", onMouseMove)
       window.removeEventListener("mousedown", onMouseDown)
@@ -196,11 +192,7 @@ export function CustomCursor() {
       className={`custom-cursor-container cursor-state-${cursorState}`}
       aria-hidden="true"
     >
-      {/* Precision Lead Dot */}
-      <div ref={dotRef} className="cursor-dot" />
-
-      {/* Fluid Trailing Ring */}
-      <div ref={ringRef} className="cursor-ring">
+      <div ref={followerRef} className="cursor-follower">
         {cursorText && <span className="cursor-label">{cursorText}</span>}
       </div>
     </div>

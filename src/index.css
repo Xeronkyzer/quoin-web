@@ -4547,21 +4547,6 @@ footer .arrow-icon {
    CUBERTO-STYLE CUSTOM CURSOR & MAGNETIC EFFECT
    ========================================================================== */
 
-/* Hide default cursor on desktop when custom cursor is active for links/buttons */
-@media (hover: hover) and (pointer: fine) {
-  body.has-custom-cursor,
-  body.has-custom-cursor a,
-  body.has-custom-cursor button,
-  body.has-custom-cursor .circle-link,
-  body.has-custom-cursor .service-card,
-  body.has-custom-cursor .service-cta,
-  body.has-custom-cursor .header-cta,
-  body.has-custom-cursor .faq-question,
-  body.has-custom-cursor [data-magnetic] {
-    cursor: none;
-  }
-}
-
 .custom-cursor-container,
 .custom-cursor-container * {
   pointer-events: none !important;
@@ -4573,7 +4558,7 @@ footer .arrow-icon {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 999999;
+  z-index: 2147483647;
   transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -4583,78 +4568,61 @@ footer .arrow-icon {
   }
 }
 
-/* 1. Precision Lead Dot (Zero lag, tracks pointer directly) */
-.cursor-dot {
+/* Fluid Trailing Black Dot (Cuberto Style follower with lerp) */
+.cursor-follower {
   position: fixed;
   top: 0;
   left: 0;
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
   border-radius: 50%;
-  background: #11110f;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45);
-  pointer-events: none;
-  z-index: 1000000;
-  will-change: transform;
-  transition: opacity 0.2s ease, transform 0.05s ease-out;
-}
-
-/* 2. Fluid Trailing Ring (Physics follower with lerp) */
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 36px;
-  height: 36px;
-  margin: -18px 0 0 -18px;
-  border-radius: 50%;
-  pointer-events: none;
-  border: 1.5px solid rgba(17, 17, 15, 0.85);
-  background: rgba(17, 17, 15, 0.04);
+  pointer-events: none !important;
+  background-color: #000000;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  will-change: transform, width, height, margin, border-color, background-color;
+  will-change: transform, width, height, margin, border-color, background-color, opacity;
   transition:
-    width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-    height 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-    margin 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-    border-color 0.22s ease,
-    background-color 0.22s ease,
-    box-shadow 0.25s ease,
-    opacity 0.22s ease;
+    width 0.26s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.26s cubic-bezier(0.2, 0.8, 0.2, 1),
+    margin 0.26s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.22s ease,
+    opacity 0.2s ease;
 }
 
-/* Dynamic States */
-.cursor-state-hover .cursor-ring {
-  width: 64px;
-  height: 64px;
-  margin: -32px 0 0 -32px;
-  border-color: #11110f;
-  background-color: rgba(17, 17, 15, 0.12);
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(1.5px);
+/* Hover state over clickable elements (smooth translucent bubble) */
+.cursor-state-hover .cursor-follower {
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+  background-color: rgba(0, 0, 0, 0.08);
+  border: 1.5px solid rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(1px);
 }
 
-.cursor-state-hover .cursor-dot {
-  opacity: 0.35;
-  transform: scale(0.6);
+/* Input state (discreet mini dot when typing in inputs/chat) */
+.cursor-state-input .cursor-follower {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  opacity: 0.25;
+  background-color: #000000;
+  box-shadow: none;
 }
 
 /* Text state (Cuberto action badge e.g. "VIEW", "EXPLORE", "BOOK", "OPEN") */
-.cursor-state-text .cursor-ring {
-  width: 86px;
-  height: 86px;
-  margin: -43px 0 0 -43px;
-  border-color: #11110f;
-  background-color: #11110f;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12);
-  border-width: 1.8px;
-}
-
-.cursor-state-text .cursor-dot {
-  opacity: 0;
+.cursor-state-text .cursor-follower {
+  width: 82px;
+  height: 82px;
+  margin: -41px 0 0 -41px;
+  border: 1.8px solid #000000;
+  background-color: #000000;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
 
 .cursor-label {
@@ -4681,17 +4649,12 @@ footer .arrow-icon {
 }
 
 /* Active / Mousedown click state */
-.cursor-state-active .cursor-ring {
-  width: 26px;
-  height: 26px;
-  margin: -13px 0 0 -13px;
-  border-color: #11110f;
-  background-color: rgba(17, 17, 15, 0.4);
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
-}
-
-.cursor-state-active .cursor-dot {
-  transform: scale(1.4);
+.cursor-state-active .cursor-follower {
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  background-color: #000000;
+  transform: scale(0.8);
 }
 
 /* Hidden state (cursor outside window) */
