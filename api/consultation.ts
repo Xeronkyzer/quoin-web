@@ -200,7 +200,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const name = cleanText(body.name, 120).replace(/\s+/g, " ")
   const email = cleanText(body.email, 254).toLowerCase()
   const phone = cleanText(body.phone, 40).replace(/\s+/g, " ")
-  const service = cleanText(body.service, 100)
+  const service = cleanText(body.service, 100) || "General Consultation"
   const message = cleanText(body.message, 2000).replace(/\s+/g, " ")
 
   const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)

@@ -9,6 +9,7 @@ import {
   useState,
 } from "react"
 import { CustomCursor } from "./CustomCursor"
+import { useSmoothScroll, smoothScrollTo } from "./useSmoothScroll"
 
 export const services = [
   {
@@ -602,6 +603,16 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   )
 }
 
+function BrandLogo({ className = "" }: { className?: string }) {
+  return (
+    <span className={`brand-logo ${className}`}>
+      <img src="/logo.png" alt="quion" className="brand-logo-img brand-logo-dark" />
+      <img src="/logo-white.png" alt="quion" className="brand-logo-img brand-logo-light" />
+    </span>
+  )
+}
+
+
 
 function useScrollReveal() {
   useLayoutEffect(() => {
@@ -841,10 +852,7 @@ export function HeroSection({
     sectionId: string,
   ) {
     event.preventDefault()
-    document.getElementById(sectionId)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    })
+    smoothScrollTo(sectionId, -72, 850)
   }
 
   return (
@@ -967,10 +975,7 @@ function HomePage({
     sectionId: string,
   ) {
     event.preventDefault()
-    document.getElementById(sectionId)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    })
+    smoothScrollTo(sectionId, -72, 850)
   }
 
   return (
@@ -979,13 +984,13 @@ function HomePage({
         <a
           href="#top"
           className="wordmark"
-          aria-label="Quoin home"
+          aria-label="quion home"
           data-magnetic
           data-magnetic-strength="0.25"
           onClick={(event) => scrollToSection(event, "top")}
         >
           <span data-magnetic-inner>
-            Quoin<span>®</span>
+            <BrandLogo />
           </span>
         </a>
 
@@ -1178,9 +1183,10 @@ function HomePage({
         <a
           href="#top"
           className="wordmark"
+          aria-label="quion home"
           onClick={(event) => scrollToSection(event, "top")}
         >
-          Quoin<span>®</span>
+          <BrandLogo />
         </a>
         <a href="/terms" onClick={(event) => openPage(event, "/terms")}>
           Terms &amp; conditions
@@ -1200,10 +1206,13 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState("")
+  const [cooldown, setCooldown] = useState(0)
+  const [leaving, setLeaving] = useState(false)
   const [serviceOpen, setServiceOpen] = useState(false)
   const [selectedService, setSelectedService] = useState("")
   const [serviceError, setServiceError] = useState(false)
-  const [leaving, setLeaving] = useState(false)
+  const serviceDropdownRef = useRef<HTMLDivElement>(null)
+  const lastSubmitRef = useRef(0)
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
     email: "",
@@ -1211,14 +1220,55 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
     message: "",
   })
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        serviceDropdownRef.current &&
+        !serviceDropdownRef.current.contains(event.target as Node)
+      ) {
+        setServiceOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const timer = window.setInterval(() => {
+      setCooldown((c) => (c <= 1 ? 0 : c - 1))
+    }, 1000)
+    return () => window.clearInterval(timer)
+  }, [cooldown])
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    // Anti-spam protection: debounce and block concurrent/repeated calls
+    const now = Date.now()
+    if (
+      submitting ||
+      submitted ||
+      cooldown > 0 ||
+      now - lastSubmitRef.current < 2500
+    ) {
+      return
+    }
+
     const form = event.currentTarget
     const formData = new FormData(form)
+
+    // Honeypot bot protection
+    if (formData.get("_hp_website")) {
+      return
+    }
+
     const name = String(formData.get("name") ?? "").trim()
     const email = String(formData.get("email") ?? "").trim()
     const phone = String(formData.get("phone") ?? "").trim()
     const message = String(formData.get("message") ?? "").trim()
+    const service = selectedService.trim()
+
     const nextErrors = {
       name: name ? "" : "Please enter your name.",
       email: !email
@@ -1231,8 +1281,7 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
     }
 
     setFieldErrors(nextErrors)
-    setServiceError(!selectedService)
-    setSubmitted(false)
+    setServiceError(!service)
     setSubmitError("")
 
     if (
@@ -1240,11 +1289,12 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
       nextErrors.email ||
       nextErrors.phone ||
       nextErrors.message ||
-      !selectedService
+      !service
     ) {
       return
     }
 
+    lastSubmitRef.current = now
     setSubmitting(true)
 
     try {
@@ -1255,7 +1305,7 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
           name,
           email,
           phone,
-          service: selectedService,
+          service,
           message,
         }),
       })
@@ -1266,9 +1316,10 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
       }
 
       setSubmitted(true)
-      setServiceError(false)
+      setCooldown(60)
       setFieldErrors({ name: "", email: "", phone: "", message: "" })
       setSelectedService("")
+      setServiceError(false)
       form.reset()
     } catch (err: any) {
       setSubmitError(
@@ -1300,10 +1351,10 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
         <a
           href="/"
           className="wordmark"
-          aria-label="Quoin home"
+          aria-label="quion home"
           onClick={(event) => leavePage(event, "/")}
         >
-          Quoin<span>®</span>
+          <BrandLogo />
         </a>
         <span className="consultation-header-label">Consultation / 05</span>
         <a
@@ -1350,40 +1401,48 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
           </div>
           <form onSubmit={handleSubmit} noValidate>
             <div className="field-row">
-              <label>
-                <span>Name</span>
-                <input
-                  name="name"
-                  type="text"
-                  placeholder="Your name"
-                  required
-                  aria-invalid={Boolean(fieldErrors.name)}
-                  aria-describedby={fieldErrors.name ? "name-error" : undefined}
-                  onChange={() =>
-                    setFieldErrors((errors) => ({ ...errors, name: "" }))
-                  }
-                />
+              <label className="minimal-field">
+                <span className="minimal-label">Name</span>
+                <div className="minimal-input-wrap">
+                  <input
+                    name="name"
+                    type="text"
+                    placeholder="Your name"
+                    required
+                    aria-invalid={Boolean(fieldErrors.name)}
+                    aria-describedby={
+                      fieldErrors.name ? "name-error" : undefined
+                    }
+                    onChange={() =>
+                      setFieldErrors((errors) => ({ ...errors, name: "" }))
+                    }
+                  />
+                  <span className="minimal-line" aria-hidden="true" />
+                </div>
                 {fieldErrors.name && (
                   <p className="field-error" id="name-error" role="alert">
                     {fieldErrors.name}
                   </p>
                 )}
               </label>
-              <label>
-                <span>Work email</span>
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="you@company.com"
-                  required
-                  aria-invalid={Boolean(fieldErrors.email)}
-                  aria-describedby={
-                    fieldErrors.email ? "email-error" : undefined
-                  }
-                  onChange={() =>
-                    setFieldErrors((errors) => ({ ...errors, email: "" }))
-                  }
-                />
+              <label className="minimal-field">
+                <span className="minimal-label">Work email</span>
+                <div className="minimal-input-wrap">
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="you@company.com"
+                    required
+                    aria-invalid={Boolean(fieldErrors.email)}
+                    aria-describedby={
+                      fieldErrors.email ? "email-error" : undefined
+                    }
+                    onChange={() =>
+                      setFieldErrors((errors) => ({ ...errors, email: "" }))
+                    }
+                  />
+                  <span className="minimal-line" aria-hidden="true" />
+                </div>
                 {fieldErrors.email && (
                   <p className="field-error" id="email-error" role="alert">
                     {fieldErrors.email}
@@ -1391,77 +1450,104 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
                 )}
               </label>
             </div>
-            <label>
-              <span>Phone number</span>
-              <input
-                name="phone"
-                type="tel"
-                placeholder="+1 (555) 000-0000"
-                required
-                aria-invalid={Boolean(fieldErrors.phone)}
-                aria-describedby={fieldErrors.phone ? "phone-error" : undefined}
-                onChange={() =>
-                  setFieldErrors((errors) => ({ ...errors, phone: "" }))
-                }
-              />
+            <label className="minimal-field">
+              <span className="minimal-label">Phone number</span>
+              <div className="minimal-input-wrap">
+                <input
+                  name="phone"
+                  type="tel"
+                  placeholder="+1 (555) 000-0000"
+                  required
+                  aria-invalid={Boolean(fieldErrors.phone)}
+                  aria-describedby={
+                    fieldErrors.phone ? "phone-error" : undefined
+                  }
+                  onChange={() =>
+                    setFieldErrors((errors) => ({ ...errors, phone: "" }))
+                  }
+                />
+                <span className="minimal-line" aria-hidden="true" />
+              </div>
               {fieldErrors.phone && (
                 <p className="field-error" id="phone-error" role="alert">
                   {fieldErrors.phone}
                 </p>
               )}
             </label>
+
+            {/* Select a Service Dropdown */}
             <div
-              className="service-select-field"
-              onBlur={(event) => {
-                if (!event.currentTarget.contains(event.relatedTarget)) {
-                  setServiceOpen(false)
-                }
-              }}
-              onKeyDown={(event) => {
-                if (event.key === "Escape") setServiceOpen(false)
-              }}
+              className="minimal-field service-select-field"
+              ref={serviceDropdownRef}
             >
-              <span>Service</span>
-              <input type="hidden" name="service" value={selectedService} />
-              <button
-                type="button"
-                className="service-select-trigger"
-                aria-haspopup="listbox"
-                aria-expanded={serviceOpen}
-                aria-controls="service-options"
-                onClick={() => setServiceOpen((open) => !open)}
+              <span
+                className="minimal-label"
+                style={{ color: serviceError ? "#ef4444" : undefined }}
               >
-                <span className={selectedService ? "" : "placeholder"}>
-                  {selectedService || "Select a service"}
-                </span>
-                <i aria-hidden="true" />
-              </button>
+                Service of interest
+              </span>
+              <div className="minimal-input-wrap">
+                <button
+                  type="button"
+                  className="service-select-trigger"
+                  aria-haspopup="listbox"
+                  aria-expanded={serviceOpen}
+                  aria-invalid={serviceError}
+                  onClick={() => {
+                    setServiceOpen((open) => !open)
+                    if (serviceError) setServiceError(false)
+                  }}
+                >
+                  <span className={selectedService ? "selected-value" : "placeholder-value"}>
+                    {selectedService || "Select a service"}
+                  </span>
+                  <i className="chevron-icon" aria-hidden="true" />
+                </button>
+                <span
+                  className="minimal-line"
+                  style={{
+                    transform: serviceOpen ? "scaleX(1)" : undefined,
+                    backgroundColor: serviceError ? "#ef4444" : undefined,
+                  }}
+                  aria-hidden="true"
+                />
+              </div>
               <div
-                className={`service-options ${serviceOpen ? "is-open" : ""}`}
-                id="service-options"
+                className={`service-options${serviceOpen ? " is-open" : ""}`}
                 role="listbox"
                 aria-label="Select a service"
               >
-                {[
-                  ...services.map((service) => service.title),
-                  "Not sure yet",
-                ].map((service, index) => (
+                {services.map((service, index) => (
                   <button
                     type="button"
                     role="option"
-                    aria-selected={selectedService === service}
-                    key={service}
+                    aria-selected={selectedService === service.title}
+                    key={service.title}
                     onClick={() => {
-                      setSelectedService(service)
+                      setSelectedService(service.title)
                       setServiceError(false)
                       setServiceOpen(false)
                     }}
                   >
                     <span>0{index + 1}</span>
-                    <strong>{service}</strong>
+                    <strong>{service.title}</strong>
                     <i aria-hidden="true" />
                   </button>
                 ))}
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={selectedService === "General Consultation"}
+                  onClick={() => {
+                    setSelectedService("General Consultation")
+                    setServiceError(false)
+                    setServiceOpen(false)
+                  }}
+                >
+                  <span>04</span>
+                  <strong>General Consultation</strong>
+                  <i aria-hidden="true" />
+                </button>
               </div>
               {serviceError && (
                 <p className="field-error" role="alert">
@@ -1469,41 +1555,82 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
                 </p>
               )}
             </div>
-            <label>
-              <span>What would you like to improve?</span>
-              <textarea
-                name="message"
-                rows={4}
-                placeholder="A short description of your current challenge"
-                required
-                aria-invalid={Boolean(fieldErrors.message)}
-                aria-describedby={
-                  fieldErrors.message ? "message-error" : undefined
-                }
-                onChange={() =>
-                  setFieldErrors((errors) => ({ ...errors, message: "" }))
-                }
-              />
+
+            <label className="minimal-field">
+              <span className="minimal-label">What would you like to improve?</span>
+              <div className="minimal-input-wrap">
+                <textarea
+                  name="message"
+                  rows={4}
+                  placeholder="A short description of your current challenge"
+                  required
+                  aria-invalid={Boolean(fieldErrors.message)}
+                  aria-describedby={
+                    fieldErrors.message ? "message-error" : undefined
+                  }
+                  onChange={() =>
+                    setFieldErrors((errors) => ({ ...errors, message: "" }))
+                  }
+                />
+                <span className="minimal-line" aria-hidden="true" />
+              </div>
               {fieldErrors.message && (
                 <p className="field-error" id="message-error" role="alert">
                   {fieldErrors.message}
                 </p>
               )}
             </label>
-            <button
-              className="button button-acid consultation-submit"
-              type="submit"
-              disabled={submitting}
-              style={{ opacity: submitting ? 0.6 : 1 }}
-            >
-              {submitting ? "Sending..." : "Book a consultation"} <Arrow />
-            </button>
-            {submitted && (
-              <p className="form-success" role="status">
-                Thank you. We've received your request and will reply within two
-                business days.
-              </p>
+            {/* Honeypot field for anti-spam */}
+            <input
+              type="text"
+              name="_hp_website"
+              tabIndex={-1}
+              autoComplete="off"
+              style={{ display: "none" }}
+              aria-hidden="true"
+            />
+
+            {!submitted ? (
+              <button
+                className="button button-acid consultation-submit"
+                type="submit"
+                disabled={submitting || cooldown > 0}
+              >
+                {submitting ? (
+                  <span className="submit-loading">
+                    <span className="submit-spinner" aria-hidden="true" />
+                    Sending request...
+                  </span>
+                ) : cooldown > 0 ? (
+                  `Please wait (${cooldown}s)`
+                ) : (
+                  <>
+                    Book a consultation <Arrow />
+                  </>
+                )}
+              </button>
+            ) : (
+              <div className="minimal-success-banner" role="status">
+                <div className="minimal-success-icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path
+                      d="M4 10.5L8 14.5L16 6"
+                      stroke="#efff3f"
+                      strokeWidth="2.4"
+                      strokeLinecap="square"
+                    />
+                  </svg>
+                </div>
+                <div className="minimal-success-text">
+                  <strong>Consultation Request Received</strong>
+                  <p>
+                    Thank you. We've recorded your details and will reply within
+                    24 hours.
+                  </p>
+                </div>
+              </div>
             )}
+
             {submitError && (
               <p className="field-error" role="alert">
                 {submitError}
@@ -1515,9 +1642,10 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
           <a
             href="/"
             className="wordmark"
+            aria-label="quion home"
             onClick={(event) => leavePage(event, "/")}
           >
-            Quoin<span>®</span>
+            <BrandLogo />
           </a>
           <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
             Terms &amp; conditions
@@ -1549,10 +1677,10 @@ function TermsPage({ navigate }: { navigate: Navigate }) {
         <a
           href="/"
           className="wordmark"
-          aria-label="Quoin home"
+          aria-label="quion home"
           onClick={openHome}
         >
-          Quoin<span>®</span>
+          <BrandLogo />
         </a>
         <span className="consultation-header-label">Legal / 06</span>
         <a href="/" className="header-cta" onClick={openHome}>
@@ -2330,10 +2458,10 @@ export function ScrapingPage({
         <a
           href="/"
           className="wordmark"
-          aria-label="Quoin home"
+          aria-label="quion home"
           onClick={(event) => leavePage(event, "/")}
         >
-          Quoin<span>®</span>
+          <BrandLogo />
         </a>
         <span className="consultation-header-label">Web Scraping / 01</span>
         <a
@@ -2558,9 +2686,10 @@ export function ScrapingPage({
           <a
             href="/"
             className="wordmark"
+            aria-label="quion home"
             onClick={(event) => leavePage(event, "/")}
           >
-            Quoin<span>®</span>
+            <BrandLogo />
           </a>
           <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
             Terms &amp; conditions
@@ -2865,10 +2994,10 @@ export function KnowledgeAssistantContent({
         <a
           href="/"
           className="wordmark"
-          aria-label="Quoin home"
+          aria-label="quion home"
           onClick={(event) => leavePage(event, "/")}
         >
-          Quoin<span>®</span>
+          <BrandLogo />
         </a>
         <span className="consultation-header-label">
           Knowledge Assistant / 02
@@ -3212,9 +3341,10 @@ export function KnowledgeAssistantContent({
           <a
             href="/"
             className="wordmark"
+            aria-label="quion home"
             onClick={(event) => leavePage(event, "/")}
           >
-            Quoin<span>®</span>
+            <BrandLogo />
           </a>
           <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
             Terms &amp; conditions
@@ -3576,10 +3706,10 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
         <a
           href="/"
           className="wordmark"
-          aria-label="Quoin home"
+          aria-label="quion home"
           onClick={(event) => leavePage(event, "/")}
         >
-          Quoin<span>®</span>
+          <BrandLogo />
         </a>
         <span className="consultation-header-label">
           SEO &amp; Search Intelligence / 03
@@ -4064,9 +4194,10 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
           <a
             href="/"
             className="wordmark"
+            aria-label="quion home"
             onClick={(event) => leavePage(event, "/")}
           >
-            Quoin<span>®</span>
+            <BrandLogo />
           </a>
           <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
             Terms &amp; conditions
@@ -4081,6 +4212,7 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
 }
 
 export default function App() {
+  useSmoothScroll({ ease: 0.085 })
   const [route, setRoute] = useState(window.location.pathname)
 
   useEffect(() => {
