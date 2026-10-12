@@ -279,6 +279,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const rawSource = cleanText(body.source, 60) || "Website Newsletter"
     await fetch(GOOGLE_SHEET_SUBSCRIBE_URL, {
       method: "POST",
+      signal: AbortSignal.timeout(8000),
       headers: {
         "Content-Type": "application/json",
         ...(process.env.WEBHOOK_SECRET

@@ -721,12 +721,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // Free-tier optimization: Enforce timeout so serverless invocations don't stall
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(
+    let timerId: ReturnType<typeof setTimeout> | undefined
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timerId = setTimeout(
         () => reject(new Error("Gemini API call timed out")),
         REQUEST_TIMEOUT_MS,
-      ),
-    )
+      )
+    })
 
     const geminiPromise = ai.models.generateContent({
       model: MODEL,
@@ -745,7 +746,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
     })
 
-    const result = await Promise.race([geminiPromise, timeoutPromise])
+    let result
+    try {
+      result = await Promise.race([geminiPromise, timeoutPromise])
+    } finally {
+      if (timerId) clearTimeout(timerId)
+    }
 
     const rawResponse = cleanText(
       result.text ||
@@ -785,6 +791,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const rawSource = metadata.utm_source || "AI Chatbot"
             const sheetRes = await fetch(GOOGLE_SHEET_SUBSCRIBE_URL, {
               method: "POST",
+              signal: AbortSignal.timeout(8000),
               headers: {
                 "Content-Type": "application/json",
                 ...(process.env.WEBHOOK_SECRET
@@ -844,6 +851,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           try {
             const sheetRes = await fetch(GOOGLE_SHEET_URL, {
               method: "POST",
+              signal: AbortSignal.timeout(8000),
               headers: {
                 "Content-Type": "application/json",
                 ...(process.env.WEBHOOK_SECRET

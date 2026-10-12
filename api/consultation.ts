@@ -235,6 +235,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const body = req.body && typeof req.body === "object" ? req.body : {}
+
+  if ((body as Record<string, unknown>)._hp_website) {
+    return res.status(200).json({
+      success: true,
+      message: "Consultation request successfully received.",
+    })
+  }
+
   const name = cleanText(body.name, 120).replace(/\s+/g, " ")
   const email = cleanText(body.email, 254).toLowerCase()
   const phone = cleanText(body.phone, 40).replace(/\s+/g, " ")
@@ -292,6 +300,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     await fetch(GOOGLE_SHEET_URL, {
       method: "POST",
+      signal: AbortSignal.timeout(8000),
       headers: {
         "Content-Type": "application/json",
         ...(process.env.WEBHOOK_SECRET

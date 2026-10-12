@@ -1751,6 +1751,7 @@ footer a:hover {
 }
 
 .minimal-success-icon path {
+  stroke: #11110f;
   stroke-dasharray: 24;
   stroke-dashoffset: 24;
   animation: checkDraw 0.45s ease 0.12s forwards;
@@ -1872,7 +1873,7 @@ footer a:hover {
   border-right: 2px solid #11110f;
   border-bottom: 2px solid #11110f;
   transform: rotate(45deg);
-  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+  transition: transform 460ms cubic-bezier(0.19, 1, 0.22, 1), border-color 0.2s ease;
 }
 
 .service-select-trigger[aria-expanded="true"] .chevron-icon {
@@ -1880,37 +1881,55 @@ footer a:hover {
   border-color: #11110f;
 }
 
-.service-options {
+/* Service Dropdown Curtain Container - Provides smooth overflow clipping identical to consultation page enter/exit */
+.service-dropdown-curtain {
   position: absolute;
   top: calc(100% + 4px);
-  right: 0;
   left: 0;
+  right: 0;
   z-index: 50;
-  padding: 4px 0;
+  overflow: hidden;
+  padding-bottom: 8px; /* Keeps brutalist box-shadow visible */
+  padding-right: 8px;
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s linear 440ms;
+}
+
+.service-dropdown-curtain.is-open {
+  pointer-events: auto;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* Service Options Dropdown Menu - Drops down and drops up identically to consultation-page */
+.service-options {
+  padding: 6px 0;
   border: 1px solid #11110f;
   border-radius: 0;
   background: #ffffff;
   box-shadow: 4px 4px 0 #11110f;
-  transform-origin: top;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-4px);
-  transition: opacity 180ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1), visibility 180ms ease;
+  transform: translate3d(0, -102%, 0);
+  opacity: 0.96;
+  transition: transform 420ms cubic-bezier(0.19, 1, 0.22, 1),
+              opacity 320ms cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform, opacity;
 }
 
-.service-options.is-open {
+.service-dropdown-curtain.is-open .service-options {
+  transform: translate3d(0, 0, 0);
   opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+  transition: transform 520ms cubic-bezier(0.19, 1, 0.22, 1),
+              opacity 360ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .service-options button {
   display: grid;
   width: 100%;
-  min-height: 48px;
-  padding: 0 16px;
-  grid-template-columns: 28px 1fr 12px;
-  gap: 10px;
+  min-height: 50px;
+  padding: 0 18px;
+  grid-template-columns: 28px 1fr 14px;
+  gap: 12px;
   align-items: center;
   color: #11110f;
   border: 0;
@@ -1920,7 +1939,25 @@ footer a:hover {
   text-align: left;
   cursor: pointer;
   font-family: inherit;
-  transition: background-color 140ms ease, color 140ms ease;
+  opacity: 0;
+  transform: translate3d(0, -10px, 0);
+  transition: opacity 280ms cubic-bezier(0.19, 1, 0.22, 1),
+              transform 380ms cubic-bezier(0.19, 1, 0.22, 1),
+              background-color 150ms ease,
+              padding-left 180ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.service-dropdown-curtain.is-open .service-options button {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition-delay: calc(var(--item-index, 0) * 40ms + 70ms);
+}
+
+.service-dropdown-curtain:not(.is-open) .service-options button {
+  opacity: 0;
+  transform: translate3d(0, -8px, 0);
+  transition-duration: 260ms;
+  transition-delay: 0s;
 }
 
 .service-options button:last-child {
@@ -1929,10 +1966,11 @@ footer a:hover {
 
 .service-options button > span {
   color: #8c8c85;
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.04em;
-  transition: color 140ms ease;
+  font-family: var(--font-mono, monospace);
+  transition: color 150ms ease, transform 180ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .service-options button > strong {
@@ -1940,7 +1978,7 @@ footer a:hover {
   font-size: 13.5px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  transition: color 140ms ease;
+  transition: color 150ms ease, transform 180ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .service-options button > i {
@@ -1950,20 +1988,23 @@ footer a:hover {
   border-radius: 50%;
   background: #11110f;
   opacity: 0;
-  transition: opacity 140ms ease;
+  transform: scale(0.4);
+  transition: opacity 160ms ease, transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .service-options button:hover,
 .service-options button:focus-visible,
 .service-options button[aria-selected="true"] {
   background: var(--acid, #efff3f);
+  padding-left: 22px;
   outline: none;
 }
 
 .service-options button:hover > span,
 .service-options button:focus-visible > span,
 .service-options button[aria-selected="true"] > span {
-  color: #55554f;
+  color: #44443e;
+  transform: translateX(1px);
 }
 
 .service-options button:hover > strong,
@@ -1977,6 +2018,7 @@ footer a:hover {
 .service-options button[aria-selected="true"] > i {
   background: #11110f;
   opacity: 1;
+  transform: scale(1);
 }
 
 .contact-section:not(.consultation-page) .contact-layout input,
@@ -5540,8 +5582,47 @@ footer .arrow-icon {
   cursor: not-allowed;
 }
 
+.newsletter-input-group.is-invalid {
+  border-color: #ef4444 !important;
+  box-shadow: 4px 4px 0 #ef4444 !important;
+  animation: newsletterShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes newsletterShake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+  40%, 60% { transform: translate3d(3px, 0, 0); }
+}
+
 .newsletter-feedback {
   min-height: 22px;
+}
+
+.newsletter-error-msg {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  animation: minimalSuccessEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.newsletter-error-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  border-radius: 0;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
 .newsletter-disclaimer {

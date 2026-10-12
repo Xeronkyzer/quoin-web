@@ -640,11 +640,28 @@ function NewsletterForm({
   const [submitting, setSubmitting] = useState(false)
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
   const [message, setMessage] = useState("")
+  const inputRef = useRef<HTMLInputElement>(null)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     const trimmedEmail = email.trim()
-    if (!trimmedEmail || submitting) return
+
+    if (!trimmedEmail) {
+      setStatus("error")
+      setMessage("Please enter your work email to subscribe.")
+      inputRef.current?.focus()
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(trimmedEmail)) {
+      setStatus("error")
+      setMessage("Please enter a valid work email (e.g. name@company.com).")
+      inputRef.current?.focus()
+      return
+    }
+
+    if (submitting) return
 
     setSubmitting(true)
     setStatus("idle")
@@ -662,6 +679,7 @@ function NewsletterForm({
       if (!res.ok) {
         setStatus("error")
         setMessage(data.error || "Unable to subscribe. Please try again.")
+        inputRef.current?.focus()
         return
       }
 
@@ -680,6 +698,7 @@ function NewsletterForm({
     <form
       className={`newsletter-form${compact ? " is-compact" : ""}`}
       onSubmit={handleSubmit}
+      noValidate
     >
       <input
         type="text"
@@ -690,9 +709,12 @@ function NewsletterForm({
         aria-hidden="true"
       />
 
-      <div className="newsletter-input-group">
+      <div
+        className={`newsletter-input-group${status === "error" ? " is-invalid" : ""}`}
+      >
         <div className="newsletter-input-wrap">
           <input
+            ref={inputRef}
             id={`newsletter-email-${compact ? "footer" : "section"}`}
             type="email"
             value={email}
@@ -701,10 +723,14 @@ function NewsletterForm({
               if (status !== "idle") setStatus("idle")
             }}
             placeholder="Enter your work email"
-            required
             disabled={submitting || status === "success"}
             aria-label="Email address for newsletter"
             aria-invalid={status === "error"}
+            aria-describedby={
+              status === "error"
+                ? `newsletter-error-${compact ? "footer" : "section"}`
+                : undefined
+            }
           />
         </div>
         <button
@@ -731,8 +757,15 @@ function NewsletterForm({
 
       <div className="newsletter-feedback" aria-live="polite">
         {status === "error" && (
-          <p className="field-error" role="alert">
-            {message}
+          <p
+            id={`newsletter-error-${compact ? "footer" : "section"}`}
+            className="newsletter-error-msg"
+            role="alert"
+          >
+            <span className="newsletter-error-badge" aria-hidden="true">
+              !
+            </span>
+            <span>{message}</span>
           </p>
         )}
         {status === "success" && (
@@ -1479,6 +1512,7 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
           phone,
           service,
           message,
+          _hp_website: String(formData.get("_hp_website") ?? ""),
         }),
       })
 
@@ -1689,41 +1723,48 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
                 />
               </div>
               <div
-                className={`service-options${serviceOpen ? " is-open" : ""}`}
-                role="listbox"
-                aria-label="Select a service"
+                className={`service-dropdown-curtain${serviceOpen ? " is-open" : ""}`}
+                aria-hidden={!serviceOpen}
               >
-                {services.map((service, index) => (
+                <div
+                  className="service-options"
+                  role="listbox"
+                  aria-label="Select a service"
+                >
+                  {services.map((service, index) => (
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={selectedService === service.title}
+                      key={service.title}
+                      style={{ "--item-index": index } as React.CSSProperties}
+                      onClick={() => {
+                        setSelectedService(service.title)
+                        setServiceError(false)
+                        setServiceOpen(false)
+                      }}
+                    >
+                      <span>0{index + 1}</span>
+                      <strong>{service.title}</strong>
+                      <i aria-hidden="true" />
+                    </button>
+                  ))}
                   <button
                     type="button"
                     role="option"
-                    aria-selected={selectedService === service.title}
-                    key={service.title}
+                    aria-selected={selectedService === "General Consultation"}
+                    style={{ "--item-index": services.length } as React.CSSProperties}
                     onClick={() => {
-                      setSelectedService(service.title)
+                      setSelectedService("General Consultation")
                       setServiceError(false)
                       setServiceOpen(false)
                     }}
                   >
-                    <span>0{index + 1}</span>
-                    <strong>{service.title}</strong>
+                    <span>04</span>
+                    <strong>General Consultation</strong>
                     <i aria-hidden="true" />
                   </button>
-                ))}
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={selectedService === "General Consultation"}
-                  onClick={() => {
-                    setSelectedService("General Consultation")
-                    setServiceError(false)
-                    setServiceOpen(false)
-                  }}
-                >
-                  <span>04</span>
-                  <strong>General Consultation</strong>
-                  <i aria-hidden="true" />
-                </button>
+                </div>
               </div>
               {serviceError && (
                 <p className="field-error" role="alert">
@@ -1793,7 +1834,7 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
                   <svg viewBox="0 0 20 20" fill="none">
                     <path
                       d="M4 10.5L8 14.5L16 6"
-                      stroke="#efff3f"
+                      stroke="#11110f"
                       strokeWidth="2.4"
                       strokeLinecap="square"
                     />
