@@ -1,4 +1,5 @@
 import "dotenv/config"
+import dotenv from "dotenv"
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
@@ -10,7 +11,12 @@ function apiDevPlugin() {
     configureServer(server: any) {
       server.middlewares.use(async (req: any, res: any, next: any) => {
         const url = req.url?.split("?")[0]
-        if (url === "/api/chat" || url === "/api/consultation") {
+        if (
+          url === "/api/chat" ||
+          url === "/api/consultation" ||
+          url === "/api/subscribe"
+        ) {
+          dotenv.config({ override: true })
           if (req.method === "OPTIONS") {
             res.setHeader("Access-Control-Allow-Origin", "*")
             res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -35,7 +41,12 @@ function apiDevPlugin() {
                   body = {}
                 }
 
-                const endpoint = url === "/api/chat" ? "chat" : "consultation"
+                const endpoint =
+                  url === "/api/chat"
+                    ? "chat"
+                    : url === "/api/consultation"
+                      ? "consultation"
+                      : "subscribe"
                 const mod = await server.ssrLoadModule(`./api/${endpoint}.ts`)
                 const handler = mod.default || mod
 

@@ -1,5 +1,6 @@
+import "dotenv/config"
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { createHash } from "crypto"
+import { createHmac } from "crypto"
 import { Redis } from "@upstash/redis"
 
 const redis =
@@ -31,11 +32,43 @@ function cleanText(value: unknown, maxLength: number): string {
     .slice(0, maxLength)
 }
 
+/**
+ * Defensive mitigation against CSV/Spreadsheet Formula Injection.
+ * Escapes leading formula command characters (=, +, -, @, tab, cr).
+ */
+function sanitizeForSpreadsheet(value: string): string {
+  if (!value) return ""
+  const trimmed = value.trim()
+  if (/^[=+\-@\t\r]/.test(trimmed)) {
+    return `'${trimmed}`
+  }
+  return trimmed
+}
+
+/**
+ * Validates outbound webhooks to prevent Server-Side Request Forgery (SSRF).
+ */
+function isSafeGoogleScriptUrl(url: string | undefined): boolean {
+  if (!url) return false
+  try {
+    const parsed = new URL(url)
+    return (
+      parsed.protocol === "https:" && parsed.hostname === "script.google.com"
+    )
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Platform-hardened client IP extraction (prevents raw client X-Forwarded-For spoofing).
+ */
 function getClientIp(req: VercelRequest): string {
   const vercelIp =
-    req.headers["x-real-ip"] || req.headers["x-vercel-forwarded-for"]
-  if (vercelIp && typeof vercelIp === "string")
+    req.headers["x-vercel-forwarded-for"] || req.headers["x-real-ip"]
+  if (vercelIp && typeof vercelIp === "string") {
     return vercelIp.split(",")[0].trim()
+  }
 
   const forwarded = req.headers["x-forwarded-for"]
   const forwardedIp = Array.isArray(forwarded)
@@ -47,7 +80,7 @@ function getClientIp(req: VercelRequest): string {
 
 async function takeRateLimit(
   key: string,
-): Promise<{ allowed: boolean; retryAfterSeconds: number }> {
+): Promise<{ allowed: boolean retryAfterSeconds: number }> {
   if (!redis) {
     const now = Date.now()
     const existing = memoryRateBuckets.get(key)
@@ -102,7 +135,11 @@ async function isDuplicateSubmission(
   phone: string,
   service: string,
 ): Promise<boolean> {
-  const fingerprint = createHash("sha256")
+  const saltSecret =
+    process.env.INTERNAL_SALT ||
+    process.env.GEMINI_API_KEY ||
+    "quoin-secure-salt-key-9284"
+  const fingerprint = createHmac("sha256", saltSecret)
     .update(`${ip}\u0000${email}\u0000${phone}\u0000${service}`)
     .digest("hex")
 
@@ -125,7 +162,7 @@ async function isDuplicateSubmission(
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS & Origin Validation
+  // CORS & Strict Origin Validation
   const allowedOrigins = new Set(
     [
       "http://localhost:5173",
@@ -154,25 +191,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  const isLocalhost = origin ? /^http:\/\/localhost(:\d+)?$/.test(origin) : false
+  const isLocalhost = origin
+    ? /^http:\/\/localhost(:\d+)?$/.test(origin)
+    : false
   const isVercelPreview =
     origin &&
     /^https:\/\/(quoin|quoin-web)(-[a-z0-9-]+)?\.vercel\.app$/.test(origin)
 
   const isAllowed =
-    !origin ||
-    isLocalhost ||
-    allowedOrigins.has(origin) ||
-    isVercelPreview
+    !origin || isLocalhost || allowedOrigins.has(origin) || isVercelPreview
 
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    origin && isAllowed ? origin : "*",
-  )
+  if (origin && isAllowed) {
+    res.setHeader("Access-Control-Allow-Origin", origin)
+  }
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS")
   res.setHeader("Access-Control-Allow-Headers", "Content-Type")
 
   if (req.method === "OPTIONS") {
+    if (origin && !isAllowed) {
+      return res.status(403).end()
+    }
     return res.status(200).end()
   }
 
@@ -241,21 +279,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     })
   }
 
-  const GOOGLE_SHEET_URL =
-    process.env.GOOGLE_SHEET_URL ||
-    "https://script.google.com/macros/s/AKfycbwNW360QUZrhZFVtVYwsOUNem5_8eXQB66Ko-qSxOdoZnnVJlTJVsjimE8ditj8WzfYBA/exec"
+  const GOOGLE_SHEET_URL = process.env.GOOGLE_SHEET_URL
+
+  if (!GOOGLE_SHEET_URL || !isSafeGoogleScriptUrl(GOOGLE_SHEET_URL)) {
+    console.error("[SECURITY] Invalid or unconfigured GOOGLE_SHEET_URL.")
+    return res.status(500).json({
+      error:
+        "Unable to record consultation request at this time. Please email us directly.",
+    })
+  }
 
   try {
     await fetch(GOOGLE_SHEET_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(process.env.WEBHOOK_SECRET
+          ? { "x-webhook-secret": process.env.WEBHOOK_SECRET }
+          : {}),
+      },
       body: JSON.stringify({
-        name,
-        email,
-        phone,
-        service,
-        message,
+        name: sanitizeForSpreadsheet(name),
+        email: sanitizeForSpreadsheet(email),
+        phone: sanitizeForSpreadsheet(phone),
+        service: sanitizeForSpreadsheet(service),
+        message: sanitizeForSpreadsheet(message),
         timestamp: new Date().toISOString(),
+        ...(process.env.WEBHOOK_SECRET
+          ? { secret: process.env.WEBHOOK_SECRET }
+          : {}),
       }),
     })
 

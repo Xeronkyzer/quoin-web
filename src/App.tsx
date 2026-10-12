@@ -278,6 +278,11 @@ const chatbotKnowledge = [
     answer:
       "Quoin provides operational intelligence for growing businesses. We turn recurring operational questions into dependable workflows through three managed services with fixed pricing and clear deliverables.",
   },
+  {
+    keywords: ["newsletter", "subscribe", "mailing list", "updates"],
+    answer:
+      "You can subscribe to our newsletter directly by sharing your email address with me right here, or using the newsletter box on our homepage. We share monthly field notes on automation and operational intelligence.",
+  },
 ]
 
 const chatTopics = [
@@ -287,6 +292,7 @@ const chatTopics = [
   { label: "Services", query: "what do you do" },
   { label: "Process", query: "how does it work" },
   { label: "Book a call", query: "consultation" },
+  { label: "Newsletter", query: "subscribe to newsletter" },
 ]
 
 function findBestAnswer(input: string): string {
@@ -371,10 +377,13 @@ function Chatbot({ navigate }: { navigate: (path: string) => void }) {
       if (data.action === "SUBMIT_LEAD" && data.lead) {
         // Securely handled by the backend edge function now!
         botText +=
-          "\n\n*(I've successfully submitted your requirements to our team! We will be in touch shortly.)*"
+          "\n\nI've successfully submitted your requirements to our team! We will be in touch shortly."
+      } else if (data.action === "SUBSCRIBE_NEWSLETTER") {
+        botText +=
+          "\n\nYou've been successfully subscribed to our newsletter list!"
       } else if (data.duplicateLead) {
         botText +=
-          "\n\n*(Your requirements have already been submitted. We'll be in touch soon!)*"
+          "\n\nYour requirements have already been submitted. We'll be in touch soon!"
       } else if (data.action === "BOOK_CONSULTATION") {
         action = "book_consultation"
       }
@@ -606,18 +615,179 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 function BrandLogo({ className = "" }: { className?: string }) {
   return (
     <span className={`brand-logo ${className}`}>
-      <img src="/logo.png" alt="quion" className="brand-logo-img brand-logo-dark" />
-      <img src="/logo-white.png" alt="quion" className="brand-logo-img brand-logo-light" />
+      <img
+        src="/logo.png"
+        alt="quion"
+        className="brand-logo-img brand-logo-dark"
+      />
+      <img
+        src="/logo-white.png"
+        alt="quion"
+        className="brand-logo-img brand-logo-light"
+      />
     </span>
   )
 }
 
+function NewsletterForm({
+  source = "Website Newsletter",
+  compact = false,
+}: {
+  source?: string
+  compact?: boolean
+}) {
+  const [email, setEmail] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
+  const [message, setMessage] = useState("")
 
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    const trimmedEmail = email.trim()
+    if (!trimmedEmail || submitting) return
+
+    setSubmitting(true)
+    setStatus("idle")
+    setMessage("")
+
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmedEmail, source }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setStatus("error")
+        setMessage(data.error || "Unable to subscribe. Please try again.")
+        return
+      }
+
+      setStatus("success")
+      setMessage(data.message || "Thank you for subscribing!")
+      setEmail("")
+    } catch {
+      setStatus("error")
+      setMessage("Network error. Please try again.")
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <form
+      className={`newsletter-form${compact ? " is-compact" : ""}`}
+      onSubmit={handleSubmit}
+    >
+      <input
+        type="text"
+        name="_hp_website"
+        tabIndex={-1}
+        autoComplete="off"
+        style={{ display: "none" }}
+        aria-hidden="true"
+      />
+
+      <div className="newsletter-input-group">
+        <div className="newsletter-input-wrap">
+          <input
+            id={`newsletter-email-${compact ? "footer" : "section"}`}
+            type="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value)
+              if (status !== "idle") setStatus("idle")
+            }}
+            placeholder="Enter your work email"
+            required
+            disabled={submitting || status === "success"}
+            aria-label="Email address for newsletter"
+            aria-invalid={status === "error"}
+          />
+        </div>
+        <button
+          type="submit"
+          className="button button-acid newsletter-submit-btn"
+          disabled={submitting || status === "success"}
+          aria-label="Subscribe to newsletter"
+        >
+          {submitting ? (
+            <span className="submit-loading">
+              <span className="submit-spinner" />
+              <span>Joining...</span>
+            </span>
+          ) : status === "success" ? (
+            <span>Subscribed ✓</span>
+          ) : (
+            <>
+              <span>Subscribe</span>
+              <Arrow />
+            </>
+          )}
+        </button>
+      </div>
+
+      <div className="newsletter-feedback" aria-live="polite">
+        {status === "error" && (
+          <p className="field-error" role="alert">
+            {message}
+          </p>
+        )}
+        {status === "success" && (
+          <p className="newsletter-success-msg">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path
+                fillRule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+            {message}
+          </p>
+        )}
+        {status === "idle" && (
+          <p className="newsletter-disclaimer">
+            Zero spam. Delivered monthly. Unsubscribe at any time.
+          </p>
+        )}
+      </div>
+    </form>
+  )
+}
+
+function NewsletterSection() {
+  return (
+    <section id="newsletter" className="section-frame newsletter-section">
+      <div className="section-meta">
+        <span>04 — Newsletter</span>
+        <span>Stay in the loop</span>
+      </div>
+      <div className="newsletter-layout">
+        <div className="newsletter-content">
+          <h2>
+            Field notes on
+            <br />
+            automation &amp; scale.
+          </h2>
+          <p>
+            Actionable takeaways on data extraction, workflow automation, and
+            operational intelligence. Delivered directly to your inbox.
+          </p>
+        </div>
+        <div className="newsletter-form-wrap">
+          <NewsletterForm source="Homepage Newsletter Section" />
+        </div>
+      </div>
+    </section>
+  )
+}
 
 function useScrollReveal() {
   useLayoutEffect(() => {
     const elements = document.querySelectorAll<HTMLElement>(
-      ".section-heading, .service-card, .process-list article, .process-outcome, .pricing-row, .faq-item, .home-footer",
+      ".section-heading, .service-card, .process-list article, .process-outcome, .pricing-row, .faq-item, .newsletter-section, .home-footer",
     )
 
     if (
@@ -672,8 +842,8 @@ export function ManagedServicesSection({
           not dashboards.
         </h2>
         <p>
-          Each service has a defined scope, clear cadence, and a useful
-          output your team can act on.
+          Each service has a defined scope, clear cadence, and a useful output
+          your team can act on.
         </p>
       </div>
 
@@ -709,7 +879,9 @@ export function ManagedServicesSection({
 
           return (
             <article
-              className={`service-card${isInteractive ? " is-interactive" : ""}`}
+              className={`service-card${
+                isInteractive ? " is-interactive" : ""
+              }`}
               key={service.title}
               role={isInteractive ? "link" : undefined}
               tabIndex={isInteractive ? 0 : undefined}
@@ -905,8 +1077,7 @@ export function HeroSection({
         {/* 3. Main Hero Content */}
         <div className="hero-content">
           <p className="hero-kicker">
-            We turn recurring operational questions into dependable
-            workflows.
+            We turn recurring operational questions into dependable workflows.
           </p>
 
           <h1 id="hero-title">
@@ -915,8 +1086,7 @@ export function HeroSection({
 
           <div className="hero-bottom">
             <p>
-              Three managed services with fixed pricing and clear
-              deliverables.
+              Three managed services with fixed pricing and clear deliverables.
             </p>
 
             {/* Circular Consultation Action Button */}
@@ -1178,6 +1348,8 @@ function HomePage({
             </div>
           </div>
         </section>
+
+        <NewsletterSection />
       </main>
       <footer className="home-footer">
         <a
@@ -1498,7 +1670,11 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
                     if (serviceError) setServiceError(false)
                   }}
                 >
-                  <span className={selectedService ? "selected-value" : "placeholder-value"}>
+                  <span
+                    className={
+                      selectedService ? "selected-value" : "placeholder-value"
+                    }
+                  >
                     {selectedService || "Select a service"}
                   </span>
                   <i className="chevron-icon" aria-hidden="true" />
@@ -1557,7 +1733,9 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
             </div>
 
             <label className="minimal-field">
-              <span className="minimal-label">What would you like to improve?</span>
+              <span className="minimal-label">
+                What would you like to improve?
+              </span>
               <div className="minimal-input-wrap">
                 <textarea
                   name="message"
@@ -2823,8 +3001,7 @@ export const knowledgeTeams = [
   },
   {
     title: "Support",
-    description:
-      "Product documentation, troubleshooting guides, and FAQs.",
+    description: "Product documentation, troubleshooting guides, and FAQs.",
   },
   {
     title: "Engineering",
@@ -2833,18 +3010,15 @@ export const knowledgeTeams = [
   },
   {
     title: "Sales",
-    description:
-      "Product information, sales material, and internal resources.",
+    description: "Product information, sales material, and internal resources.",
   },
   {
     title: "Operations",
-    description:
-      "SOPs, workflows, procedures, and operational documentation.",
+    description: "SOPs, workflows, procedures, and operational documentation.",
   },
   {
     title: "Management",
-    description:
-      "Company information, reports, and internal knowledge.",
+    description: "Company information, reports, and internal knowledge.",
   },
 ]
 
@@ -2909,14 +3083,12 @@ export const knowledgeProcess = [
   {
     step: "01",
     title: "Connect",
-    description:
-      "Provide your organization's documents and knowledge sources.",
+    description: "Provide your organization's documents and knowledge sources.",
   },
   {
     step: "02",
     title: "Organize",
-    description:
-      "Structure information into searchable knowledge bases.",
+    description: "Structure information into searchable knowledge bases.",
   },
   {
     step: "03",
@@ -2987,7 +3159,9 @@ export function KnowledgeAssistantContent({
 
   return (
     <div
-      className={`knowledge-page site-shell consultation-shell${leaving ? " is-leaving" : ""}`}
+      className={`knowledge-page site-shell consultation-shell${
+        leaving ? " is-leaving" : ""
+      }`}
     >
       {/* Header */}
       <header className="site-header consultation-header">
@@ -3543,7 +3717,8 @@ export const seoProcess = [
   {
     step: "01",
     title: "Scope",
-    description: "Define target keywords, competitors, and locations to monitor.",
+    description:
+      "Define target keywords, competitors, and locations to monitor.",
   },
   {
     step: "02",
@@ -3732,15 +3907,17 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
           </div>
           <div className="knowledge-hero-grid">
             <div>
-              <p className="eyebrow">Search Intelligence / Continuous Signals</p>
+              <p className="eyebrow">
+                Search Intelligence / Continuous Signals
+              </p>
               <h1>SEO &amp; Search Intelligence.</h1>
               <h2>
                 Search visibility, rankings, and SERP signals on schedule.
               </h2>
               <p>
-                Monitor keyword positions, audit search engines, track competitor
-                SERP movements, and measure brand citations across traditional
-                search and AI Overviews.
+                Monitor keyword positions, audit search engines, track
+                competitor SERP movements, and measure brand citations across
+                traditional search and AI Overviews.
               </p>
               <a
                 href="/consultation"
@@ -3822,7 +3999,8 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
                 <span>
-                  https://google.com/search?q={currentKeyword.query.replace(/\s+/g, "+")}
+                  https://google.com/search?q=
+                  {currentKeyword.query.replace(/\s+/g, "+")}
                 </span>
               </div>
 
@@ -3910,9 +4088,9 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
             </h2>
             <div>
               <p>
-                From keyword rankings and competitor visibility to technical health
-                and AI Overviews, we collect and structure the search signals your
-                team needs.
+                From keyword rankings and competitor visibility to technical
+                health and AI Overviews, we collect and structure the search
+                signals your team needs.
               </p>
               <ItemList items={seoSignals} className="knowledge-list" />
             </div>
@@ -3960,8 +4138,8 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
             </div>
             <h2>Automated rank intelligence.</h2>
             <p>
-              Deploy continuous AI workflows that cluster keywords, detect ranking
-              shifts, and surface growth opportunities automatically.
+              Deploy continuous AI workflows that cluster keywords, detect
+              ranking shifts, and surface growth opportunities automatically.
             </p>
             <ItemList items={seoAiWorkflows} className="knowledge-list" />
             <p className="knowledge-evidence">
@@ -3976,13 +4154,13 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
             </div>
             <h2>Search intelligence for AI tools.</h2>
             <p>
-              Connect autonomous marketing agents, Claude, and Cursor directly to
-              real-time SERP and search data via standard MCP interfaces.
+              Connect autonomous marketing agents, Claude, and Cursor directly
+              to real-time SERP and search data via standard MCP interfaces.
             </p>
             <ItemList items={seoMcpCapabilities} className="knowledge-list" />
             <p className="knowledge-evidence">
-              Standardized Model Context Protocol servers for automated querying and
-              monitoring.
+              Standardized Model Context Protocol servers for automated querying
+              and monitoring.
               <span>Source: MCP Protocol</span>
             </p>
           </article>
@@ -4001,8 +4179,9 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
               One pipeline.
             </h2>
             <p>
-              Search is no longer just ten blue links. We capture visibility across
-              traditional search, local maps, AI generation, and news feeds.
+              Search is no longer just ten blue links. We capture visibility
+              across traditional search, local maps, AI generation, and news
+              feeds.
             </p>
           </div>
           <div className="knowledge-team-grid">
@@ -4065,8 +4244,8 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
               </h2>
               <p>
                 For marketing and engineering teams that require dependable
-                technical auditing, schema validation, crawl diagnostics, and Core
-                Web Vitals tracking.
+                technical auditing, schema validation, crawl diagnostics, and
+                Core Web Vitals tracking.
               </p>
               <p className="knowledge-evidence">
                 Scheduled crawler audits with headless rendering and Lighthouse
@@ -4094,7 +4273,8 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
             </p>
             <ItemList items={seoIntegrations} className="knowledge-list" />
             <p className="knowledge-evidence">
-              Native webhooks, REST API endpoints, and direct cloud storage sync.
+              Native webhooks, REST API endpoints, and direct cloud storage
+              sync.
               <span>Source: Quoin Platform</span>
             </p>
           </article>
@@ -4127,10 +4307,7 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
               <br />
               driven teams.
             </h2>
-            <ItemList
-              items={seoUseCases}
-              className="knowledge-chip-list"
-            />
+            <ItemList items={seoUseCases} className="knowledge-chip-list" />
           </div>
         </section>
 
@@ -4147,8 +4324,8 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
               to intelligence.
             </h2>
             <p>
-              A controlled five-stage process for scoping, collecting, auditing, and
-              delivering dependable search intelligence.
+              A controlled five-stage process for scoping, collecting, auditing,
+              and delivering dependable search intelligence.
             </p>
           </div>
           <div className="knowledge-process-grid">
