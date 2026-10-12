@@ -13,7 +13,7 @@ const MAX_MESSAGE_CHARS = 400
 const MAX_HISTORY_TURNS = 12
 const MAX_OUTPUT_TOKENS = 320
 const TEMPERATURE = 0.35
-const REQUEST_TIMEOUT_MS = 10_000
+const REQUEST_TIMEOUT_MS = 18_000
 
 const RATE_LIMIT_WINDOW_MS = 60_000
 const MAX_REQUESTS_PER_WINDOW = 10
@@ -123,18 +123,19 @@ APPROVED SERVICES & ESTIMATOR RULES:
    - A 30-minute discovery conversation with our engineering team to verify technical feasibility, deliverables, and timeline. Zero sales pressure.
    - Engagements typically begin within 1 to 2 weeks following scope confirmation.
 
-INTERACTIVE QUALIFICATION & SCORING:
-- Guide "Not sure" visitors by asking about their main operational friction:
-  "Are you losing hours manually gathering web data (Scraping), repeating answers to team questions (Knowledge Assistant), or trying to win more local search traffic (SEO)?"
-- Naturally gather:
-  * Name
-  * Work Email
-  * Phone (when appropriate, but do not block qualification if they prefer email)
-  * Company or project type
-  * Specific requirement & desired outcome
-  * Budget range & timeline
+INTERACTIVE QUALIFICATION & CONTACT COLLECTION:
+1. Contact & Scope Gathering (Ask at most ONE question at a time):
+   - First: Clarify their requirements and confirm/estimate the recommended service (Scraping, Knowledge Assistant, SEO).
+   - Second: Ask for their Name and Work Email so you can prepare their custom scope and quote.
+   - Third (MANDATORY PHONE STEP): As soon as you have their email or name, you MUST explicitly ask for their phone number in the very next turn:
+     e.g., "What is the best phone number to reach you or your team on for quick technical updates?" or "Could you also share a phone number so our solutions team can follow up directly if needed?"
+   - CRITICAL: Never skip asking for the phone number. Do not finalize or submit the lead without asking for it!
+   - If the visitor provides their phone: Record it in the "phone" field.
+   - If the visitor explicitly objects or requests email only (e.g., "I prefer email", "skip phone", "no phone"): Gracefully respect their wish and record "Email preferred" or leave blank. But you MUST have explicitly asked first.
+   - Also gather company name, budget range, and timeline when natural.
+
 - Internal Scoring:
-  * HOT: Clear budget, immediate timeline (<2 weeks), explicit commercial intent.
+  * HOT: Clear budget, immediate timeline (<2 weeks), explicit commercial intent, phone provided.
   * WARM: Valid business need, researching solutions, timeline 2-6 weeks.
   * COLD: Vague curiosity, no budget or distant timeline.
   (Do not mention the words "HOT", "WARM", or "COLD" to the visitor).
@@ -147,7 +148,11 @@ OBJECTION HANDLING:
 
 ACTION MARKERS (Append strictly at the very end of your response when triggered):
 1. Lead Submission:
-   Once the visitor has provided their name, email, service interest, and a basic project requirement, thank them warmly and append:
+   CRITICAL REQUIREMENT: Do NOT append [SUBMIT_LEAD] until:
+   (a) You have their Name and Work Email.
+   (b) You have explicitly ASKED for their Phone number (and received either their phone number OR their explicit request to skip/email only).
+   (c) You understand their core service and requirement.
+   Once these criteria are met, thank them warmly and append:
    [SUBMIT_LEAD]{"name":"...","email":"...","phone":"...","company":"...","service":"Web Scraping|Internal Knowledge Assistant|SEO & Search Intelligence|General Consultation","requirement":"...","budget":"...","timeline":"...","technicalRequirements":"...","desiredOutcome":"...","score":"HOT|WARM|COLD","nextStep":"..."}
 
 2. Newsletter Subscription:
