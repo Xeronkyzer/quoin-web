@@ -10,6 +10,7 @@ import {
 } from "react"
 import { CustomCursor } from "./CustomCursor"
 import { useSmoothScroll, smoothScrollTo } from "./useSmoothScroll"
+import { TermsPage, PrivacyPage, RefundPage } from "./LegalPages"
 
 export const services = [
   {
@@ -36,14 +37,14 @@ export const services = [
     link: "/knowledge-assistant",
     audience: "For service businesses with 20–100 employees",
     description:
-      "A private assistant trained on your SOPs and handbook, giving your team reliable answers from approved sources.",
+      "A company-specific assistant that helps your team find answers across SOPs, handbooks, and approved knowledge sources.",
     features: [
       "Private, company-specific chatbot",
       "SOP and handbook ingestion",
-      "Monthly knowledge refresh",
+      "Knowledge updates",
     ],
     setup: "From $299 setup",
-    monthly: "$250 / month",
+    monthly: "From $250 / month",
     price: "From $299",
   },
   {
@@ -51,16 +52,15 @@ export const services = [
     letter: "S",
     title: "SEO & Search Intelligence",
     link: "/seo",
-    audience: "For businesses wanting organic search growth",
+    audience: "For businesses focused on search visibility",
     description:
-      "Research, track, and improve your search visibility with continuous intelligence and reporting.",
+      "Research, track, and understand your search visibility with structured intelligence and reporting.",
     features: [
       "Rankings, clicks, and competitors",
       "Search performance audit",
       "Actionable recommendations",
     ],
-    setup: "From $99 audit",
-    monthly: "$99 / month",
+    monthly: "From $99 / month",
     price: "From $99/mo",
   },
 ]
@@ -75,7 +75,7 @@ const process = [
   {
     title: "Configuration",
     phase: "Secure setup",
-    text: "We securely collect the required sources and configure your reporting workflow.",
+    text: "We collect the required sources and configure your workflow around the agreed scope.",
     output: "Working system",
   },
   {
@@ -87,7 +87,7 @@ const process = [
   {
     title: "Review",
     phase: "Continuous refinement",
-    text: "We review performance, answer questions, and refine the service as needed.",
+    text: "We review the output, answer questions, and refine the service as needed.",
     output: "Monthly review",
   },
 ]
@@ -126,7 +126,7 @@ const chatbotKnowledge = [
       "cancellation",
     ],
     answer:
-      "No long-term contracts. Managed services are billed monthly after the initial setup or audit. You can cancel before the next billing cycle with 30 days' written notice.",
+      "Engagement and cancellation terms depend on the agreed service and written scope. For recurring work, please review the Refund & Cancellation Policy before the next billing cycle or ask us to clarify the terms for your proposed scope.",
   },
   {
     keywords: [
@@ -139,7 +139,7 @@ const chatbotKnowledge = [
       "when",
     ],
     answer:
-      "Most engagements begin within 1–2 weeks of the consultation, depending on access to the required data and documents. You'll have your first delivery shortly after configuration.",
+      "Timing depends on the agreed scope, source access, and technical requirements. We can assess feasibility and provide a proposed timetable during scoping, but we do not promise a start or delivery date before that work is agreed.",
   },
   {
     keywords: [
@@ -152,7 +152,7 @@ const chatbotKnowledge = [
       "handle",
     ],
     answer:
-      "We only request the access needed to deliver the service. Each client gets a separate instance. Details about data handling, retention, and permissions are agreed during configuration. We comply with DPDP Act 2023 and GDPR where relevant.",
+      "We request only the access needed for the agreed work, and the relevant data-handling details are set during scoping and configuration. For the current policy on personal data, retention, and safeguards, please review Quoin's Privacy Policy or ask us about your specific use case.",
   },
   {
     keywords: [
@@ -164,7 +164,7 @@ const chatbotKnowledge = [
       "additional",
     ],
     answer:
-      "The standard packages are intentionally focused. If you need additional locations, competitors, or document sources, we can scope those separately via a change request.",
+      "The public services are focused, but a scope can be tailored around your sources, requirements, and workflow. We can discuss any additional locations, competitors, integrations, or document sources during scoping.",
   },
   {
     keywords: [
@@ -180,7 +180,7 @@ const chatbotKnowledge = [
       "payment",
     ],
     answer:
-      "Our pricing is transparent and fixed:\n\n• Competitor Price Intelligence — $500 setup, $300/month\n• Internal Knowledge Assistant — $1,500 setup, $250/month\n• Local Search Reporting — $499 audit, $199/month/location\n\nAll prices in USD. No hidden fees.",
+      "Our published starting points are From $99 one-time for Web Scraping & Data Extraction, From $299 one-time setup for an Internal Knowledge Assistant, and From $99 per month for SEO & Search Intelligence. These are starting points rather than fixed quotes; the final scope and price are confirmed in writing after scoping.",
   },
   {
     keywords: [
@@ -192,7 +192,7 @@ const chatbotKnowledge = [
       "ecommerce",
     ],
     answer:
-      "Our Competitor Price Intelligence service monitors up to 5 competitors weekly, delivering price and stock reports in a structured Google Sheet with alerts on price drops. Perfect for e-commerce brands.",
+      "Quoin can scope public-web data extraction around the sources, fields, format, and cadence you need. We confirm the practical and permitted collection approach before committing to a project rather than promising a fixed monitoring package.",
   },
   {
     keywords: [
@@ -205,7 +205,7 @@ const chatbotKnowledge = [
       "employee",
     ],
     answer:
-      "The Internal Knowledge Assistant is a private chatbot trained on your SOPs and handbook. It gives your team reliable answers from approved sources, with monthly content refreshes. Ideal for service businesses with 20–100 employees.",
+      "An Internal Knowledge Assistant can organize approved documents, SOPs, handbooks, and other internal sources into a searchable assistant. Its sources, access controls, integrations, and update process are defined around your organization during scoping.",
   },
   {
     keywords: [
@@ -220,12 +220,12 @@ const chatbotKnowledge = [
       "hvac",
     ],
     answer:
-      "Local Search Reporting provides a monthly scorecard covering rankings, clicks, competitors, Google Business Profile review, and 3 recommended fixes. Built for dentists, law firms, HVAC companies, and med spas.",
+      "SEO & Search Intelligence can be scoped around keyword research, search visibility, rankings, competitors, audits, and supported data sources. It provides research and monitoring; it does not guarantee rankings, traffic, or business results.",
   },
   {
     keywords: ["process", "how", "work", "step", "workflow"],
     answer:
-      "Our 4-step process:\n\n01 — Consultation: We confirm fit, scope, and business decisions.\n02 — Configuration: We collect sources and set up your workflow.\n03 — Delivery: You receive output on a clear schedule.\n04 — Review: We review performance and refine as needed.",
+      "A typical engagement moves through consultation, configuration, delivery, and review. The exact milestones, sources, outputs, and cadence are agreed for the particular scope rather than assumed in advance.",
   },
   {
     keywords: [
@@ -238,12 +238,12 @@ const chatbotKnowledge = [
       "talk",
     ],
     answer:
-      "You can book a free 30-minute consultation through our website. It's a focused, no-obligation first conversation where we confirm whether Quoin is a fit for your needs. No sales pressure.",
+      "You can book a free scoping consultation through our website. It is a focused first conversation to understand your requirements and assess fit; any scope, price, or timeline is confirmed separately in writing.",
   },
   {
     keywords: ["refund", "money back", "guarantee"],
     answer:
-      "Setup fees are non-refundable once work has begun. Recurring fees are non-refundable for a period already started. However, if we fail to deliver a month's deliverables for reasons within our control, we'll credit or refund that month's fee on a pro-rata basis.",
+      "Refund and cancellation outcomes depend on the current Refund & Cancellation Policy and the agreed scope. Please review the policy before relying on a specific outcome, or ask the team to clarify how it applies to your proposed engagement.",
   },
   {
     keywords: [
@@ -253,7 +253,7 @@ const chatbotKnowledge = [
       "machine learning",
     ],
     answer:
-      "Some of our deliverables use AI for assistant answers and report summaries. AI output is for general business information — not legal, HR, or financial advice. You should review output before relying on it for important decisions.",
+      "Some Quoin services can include AI-assisted workflows and knowledge systems. The appropriate sources, access controls, review process, and limitations are scoped for the use case; important business decisions should remain subject to suitable human review.",
   },
   {
     keywords: [
@@ -276,7 +276,7 @@ const chatbotKnowledge = [
   {
     keywords: ["who", "about", "quoin", "company", "what do you do"],
     answer:
-      "Quoin provides operational intelligence for growing businesses. We turn recurring operational questions into dependable workflows through three managed services with fixed pricing and clear deliverables.",
+      "Quoin provides operational intelligence through Web Scraping & Data Extraction, Internal Knowledge Assistants, and SEO & Search Intelligence. The website shows clear starting points and service descriptions; a written scope confirms the deliverables for a specific engagement.",
   },
   {
     keywords: ["newsletter", "subscribe", "mailing list", "updates"],
@@ -427,7 +427,7 @@ function Chatbot({ navigate }: { navigate: (path: string) => void }) {
               <div className="chatbot-avatar">Q</div>
               <div>
                 <strong>Quoin Assistant</strong>
-                <span>Always online · Instant replies</span>
+                <span>Services, pricing &amp; policies</span>
               </div>
             </div>
             <button
@@ -612,17 +612,21 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   )
 }
 
-function BrandLogo({ className = "" }: { className?: string }) {
+export function BrandLogo({ className = "" }: { className?: string }) {
   return (
     <span className={`brand-logo ${className}`}>
       <img
         src="/logo.png"
         alt="quion"
+        width={456}
+        height={180}
         className="brand-logo-img brand-logo-dark"
       />
       <img
         src="/logo-white.png"
         alt="quion"
+        width={456}
+        height={180}
         className="brand-logo-img brand-logo-light"
       />
     </span>
@@ -710,7 +714,9 @@ function NewsletterForm({
       />
 
       <div
-        className={`newsletter-input-group${status === "error" ? " is-invalid" : ""}`}
+        className={`newsletter-input-group${
+          status === "error" ? " is-invalid" : ""
+        }`}
       >
         <div className="newsletter-input-wrap">
           <input
@@ -782,7 +788,7 @@ function NewsletterForm({
         )}
         {status === "idle" && (
           <p className="newsletter-disclaimer">
-            Zero spam. Delivered monthly. Unsubscribe at any time.
+            No unnecessary emails. Delivered monthly. Unsubscribe at any time.
           </p>
         )}
       </div>
@@ -884,7 +890,7 @@ export function ManagedServicesSection({
       <div className="service-standards">
         <div>
           <span>Commercial model</span>
-          <strong>Fixed base pricing</strong>
+          <strong>Clear base pricing</strong>
         </div>
         <div>
           <span>Delivery</span>
@@ -963,7 +969,7 @@ export function ManagedServicesSection({
 
                 {/* Price Bar */}
                 <div className="service-price">
-                  <span>{service.setup}</span>
+                  {service.setup ? <span>{service.setup}</span> : <span />}
                   <strong>{service.monthly}</strong>
                 </div>
 
@@ -1119,7 +1125,8 @@ export function HeroSection({
 
           <div className="hero-bottom">
             <p>
-              Three managed services with fixed pricing and clear deliverables.
+              Three managed services with clear pricing and defined
+              deliverables.
             </p>
 
             {/* Circular Consultation Action Button */}
@@ -1143,7 +1150,7 @@ export function HeroSection({
 
           {/* Three Bottom Principles */}
           <div className="hero-principles">
-            <span>Fixed pricing</span>
+            <span>Clear pricing</span>
             <span>Clear deliverables</span>
             <span>Human reviewed</span>
           </div>
@@ -1187,7 +1194,7 @@ function HomePage({
         <a
           href="#top"
           className="wordmark"
-          aria-label="quion home"
+          aria-label="quoin home"
           data-magnetic
           data-magnetic-strength="0.25"
           onClick={(event) => scrollToSection(event, "top")}
@@ -1385,23 +1392,36 @@ function HomePage({
         <NewsletterSection />
       </main>
       <footer className="home-footer">
-        <a
-          href="#top"
-          className="wordmark"
-          aria-label="quion home"
-          onClick={(event) => scrollToSection(event, "top")}
-        >
-          <BrandLogo />
-        </a>
-        <a href="/terms" onClick={(event) => openPage(event, "/terms")}>
-          Terms &amp; conditions
-        </a>
-        <a
-          href="/consultation"
-          onClick={(event) => openPage(event, "/consultation")}
-        >
-          Book a consultation <Arrow />
-        </a>
+        <div className="footer-left">
+          <a
+            href="#top"
+            className="wordmark"
+            aria-label="quoin home"
+            onClick={(event) => scrollToSection(event, "top")}
+          >
+            <BrandLogo />
+          </a>
+          <span className="footer-copyright">
+            &copy; 2026 Quoin. All rights reserved.
+          </span>
+        </div>
+        <div className="footer-legal">
+          <a href="/terms" onClick={(event) => openPage(event, "/terms")}>
+            Terms &amp; Conditions
+          </a>
+          <span className="footer-sep" aria-hidden="true">
+            ·
+          </span>
+          <a href="/privacy" onClick={(event) => openPage(event, "/privacy")}>
+            Privacy Policy
+          </a>
+          <span className="footer-sep" aria-hidden="true">
+            ·
+          </span>
+          <a href="/refund" onClick={(event) => openPage(event, "/refund")}>
+            Refund Policy
+          </a>
+        </div>
       </footer>
     </div>
   )
@@ -1557,7 +1577,7 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
         <a
           href="/"
           className="wordmark"
-          aria-label="quion home"
+          aria-label="quoin home"
           onClick={(event) => leavePage(event, "/")}
         >
           <BrandLogo />
@@ -1723,7 +1743,9 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
                 />
               </div>
               <div
-                className={`service-dropdown-curtain${serviceOpen ? " is-open" : ""}`}
+                className={`service-dropdown-curtain${
+                  serviceOpen ? " is-open" : ""
+                }`}
                 aria-hidden={!serviceOpen}
               >
                 <div
@@ -1753,7 +1775,9 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
                     type="button"
                     role="option"
                     aria-selected={selectedService === "General Consultation"}
-                    style={{ "--item-index": services.length } as React.CSSProperties}
+                    style={
+                      { "--item-index": services.length } as React.CSSProperties
+                    }
                     onClick={() => {
                       setSelectedService("General Consultation")
                       setServiceError(false)
@@ -1858,707 +1882,87 @@ function ConsultationPage({ navigate }: { navigate: Navigate }) {
           </form>
         </div>
         <footer>
-          <a
-            href="/"
-            className="wordmark"
-            aria-label="quion home"
-            onClick={(event) => leavePage(event, "/")}
-          >
-            <BrandLogo />
-          </a>
-          <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
-            Terms &amp; conditions
-          </a>
-          <a href="/" onClick={(event) => leavePage(event, "/")}>
-            Return home <Arrow />
-          </a>
+          <div className="footer-left">
+            <a
+              href="/"
+              className="wordmark"
+              aria-label="quoin home"
+              onClick={(event) => leavePage(event, "/")}
+            >
+              <BrandLogo />
+            </a>
+            <span className="footer-copyright">
+              &copy; 2026 Quoin. All rights reserved.
+            </span>
+          </div>
+          <div className="footer-legal">
+            <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
+              Terms &amp; Conditions
+            </a>
+            <span className="footer-sep" aria-hidden="true">
+              ·
+            </span>
+            <a
+              href="/privacy"
+              onClick={(event) => leavePage(event, "/privacy")}
+            >
+              Privacy Policy
+            </a>
+            <span className="footer-sep" aria-hidden="true">
+              ·
+            </span>
+            <a href="/refund" onClick={(event) => leavePage(event, "/refund")}>
+              Refund Policy
+            </a>
+          </div>
         </footer>
       </main>
     </div>
   )
 }
 
-function TermsPage({ navigate }: { navigate: Navigate }) {
-  const [leaving, setLeaving] = useState(false)
-
-  function openHome(event: ReactMouseEvent<HTMLAnchorElement>) {
-    event.preventDefault()
-    if (leaving) return
-    setLeaving(true)
-    window.setTimeout(() => {
-      navigate("/")
-    }, 420)
-  }
-
-  return (
-    <div className={`site-shell terms-shell${leaving ? " is-leaving" : ""}`}>
-      <header className="site-header consultation-header">
-        <a
-          href="/"
-          className="wordmark"
-          aria-label="quion home"
-          onClick={openHome}
-        >
-          <BrandLogo />
-        </a>
-        <span className="consultation-header-label">Legal / 06</span>
-        <a href="/" className="header-cta" onClick={openHome}>
-          Back to home
-        </a>
-      </header>
-      <main className="terms-page">
-        <div className="section-meta">
-          <span>06 — Legal</span>
-          <span>Last updated — Oct 10, 2026 · @Xeron</span>
-        </div>
-        <div className="terms-heading">
-          <p className="eyebrow">Quoin / Terms</p>
-          <h1>
-            Terms &amp;
-            <br />
-            conditions.
-          </h1>
-        </div>
-
-        <div className="terms-content">
-          <section className="terms-section">
-            <h2>1. Agreement and Acceptance</h2>
-            <p>
-              These Terms and Conditions (&ldquo;Terms&rdquo;) are a binding
-              agreement between Quoin (&ldquo;we&rdquo;, &ldquo;us&rdquo;,
-              &ldquo;our&rdquo;), and the business or person that engages us or
-              uses our website (&ldquo;Client&rdquo;, &ldquo;you&rdquo;). You
-              accept these Terms when you submit an enquiry form, accept a
-              proposal, pay an invoice, or use the Services.
-            </p>
-            <p>
-              If you accept on behalf of a company, you confirm you have
-              authority to bind it. The Services are for business use only. If a
-              signed proposal or order form conflicts with these Terms, the
-              proposal controls for that engagement only.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>2. Definitions</h2>
-            <ul>
-              <li>
-                <strong>Services:</strong> the managed services described in
-                Section 3.
-              </li>
-              <li>
-                <strong>Proposal:</strong> the written quote, order form, or
-                statement of work we issue and you accept, setting out the
-                Services, scope, schedule, and Fees.
-              </li>
-              <li>
-                <strong>Deliverables:</strong> reports, spreadsheets, alerts,
-                scorecards, configured assistants, and other outputs we produce
-                for you under a Proposal.
-              </li>
-              <li>
-                <strong>Client Materials:</strong> documents, data, credentials,
-                access rights, and other content you provide to us, including
-                SOPs, handbooks, and price sheets.
-              </li>
-              <li>
-                <strong>Public Sources:</strong> web pages and data that anyone
-                can view without logging in, paying, or bypassing an access
-                restriction.
-              </li>
-              <li>
-                <strong>Third-Party Tools:</strong> software, platforms, and
-                services operated by others that we use or that you subscribe to
-                in connection with the Services.
-              </li>
-              <li>
-                <strong>Fees:</strong> all amounts payable under a Proposal,
-                including setup and recurring fees.
-              </li>
-            </ul>
-          </section>
-
-          <section className="terms-section">
-            <h2>3. The Services</h2>
-            <p>
-              We provide the following managed services. Exact scope, volumes,
-              and schedule are set out in your Proposal.
-            </p>
-            <h3>3.1 Competitor Price Intelligence</h3>
-            <p>
-              We monitor publicly available product pages of up to the number of
-              competitors named in your Proposal (typically five) and deliver a
-              weekly price and stock report in a shared spreadsheet, with alerts
-              on price reductions. Alerts are sent on a best-efforts basis, with
-              a target of one business day from detection.
-            </p>
-            <h3>3.2 Internal Knowledge Assistant</h3>
-            <p>
-              We configure a private chatbot that answers staff questions using
-              the Client Materials you supply, such as SOPs, handbooks, and
-              price sheets. We refresh its content monthly from updated
-              documents you provide. Each Client receives a separate instance.
-            </p>
-            <h3>3.3 Local Search Reporting</h3>
-            <p>
-              We deliver a monthly scorecard covering the keywords, search
-              clicks, competitors, Google Business Profile review, and
-              recommended actions stated in your Proposal. We may also provide a
-              one-time initial audit. This service is reporting and
-              recommendation only. We do not implement changes to your website
-              or profiles unless agreed in writing.
-            </p>
-            <h3>3.4 Changes and additional work</h3>
-            <p>
-              We may update our methods, tools, and formats if the Services
-              remain materially equivalent. Work outside the Proposal, including
-              extra competitors, locations, keywords, or documents, requires a
-              written change request and may carry additional Fees.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>4. Engagement, Onboarding, and Acceptance of Deliverables</h2>
-            <p>
-              A Proposal becomes binding when you accept it in writing,
-              including by email or electronic signature, or when you pay the
-              first invoice. Work begins once we receive the setup Fee, the
-              Client Materials, and any access we need.
-            </p>
-            <p>
-              We will deliver on the schedule in the Proposal. Delays caused by
-              late or incomplete Client Materials, or by missing access, extend
-              our timelines by the same period.
-            </p>
-            <p>
-              Each Deliverable is deemed accepted unless you notify us of a
-              material defect within seven days of delivery. We will correct a
-              reported defect within a reasonable time. Corrections are your
-              remedy for defective Deliverables, in addition to any rights that
-              cannot be excluded by law.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>5. Client Responsibilities</h2>
-            <p>You agree to:</p>
-            <ul>
-              <li>
-                Provide accurate, complete, and timely information, and name one
-                contact who can approve decisions.
-              </li>
-              <li>
-                Ensure you own or have the right to share all Client Materials,
-                and that sharing them with us does not breach any law, contract,
-                or third-party right.
-              </li>
-              <li>
-                Not include passwords, government ID numbers, payment card data,
-                or medical records in Client Materials unless we have agreed in
-                writing how they will be protected.
-              </li>
-              <li>
-                Grant and maintain the access we reasonably need, such as
-                spreadsheet sharing and Google Business Profile access. You may
-                revoke access at any time, but Services depending on it may
-                stop.
-              </li>
-              <li>
-                Keep your own Third-Party Tool subscriptions active and paid
-                where the Proposal requires.
-              </li>
-              <li>
-                For the Internal Knowledge Assistant, tell your staff it is an
-                automated tool, review its answers for important decisions, and
-                keep its content current by sending us updated documents.
-              </li>
-              <li>
-                Use the Services and Deliverables only for lawful business
-                purposes and in line with Section 8.
-              </li>
-            </ul>
-          </section>
-
-          <section className="terms-section">
-            <h2>6. Fees, Payment, and Taxes</h2>
-            <h3>6.1 Fees</h3>
-            <p>
-              Fees are stated in your Proposal in USD. Prices on our website are
-              for guidance only and do not bind us.
-            </p>
-            <h3>6.2 Billing</h3>
-            <p>
-              Setup Fees are due before work begins. Recurring Fees are invoiced
-              monthly in advance and are due within 7 days of the invoice date.
-            </p>
-            <h3>6.3 Third-party costs</h3>
-            <p>
-              Subscription, hosting, and data costs charged by Third-Party
-              Tools, such as the platform that hosts your assistant, are
-              separate from our Fees. Where the Proposal says you pay them, you
-              pay the provider directly or reimburse us at cost.
-            </p>
-            <h3>6.4 Taxes</h3>
-            <p>
-              Fees exclude GST, VAT, sales tax, and similar taxes, which you pay
-              in addition where applicable. If law requires you to withhold tax,
-              you will gross up the payment unless the Proposal says otherwise.
-            </p>
-            <h3>6.5 Late payment</h3>
-            <p>
-              Overdue amounts accrue interest at 1.5% per month, or the highest
-              rate allowed by law if lower. If an invoice remains unpaid 10 days
-              after written notice, we may suspend the Services until it is
-              paid.
-            </p>
-            <h3>6.6 Refunds</h3>
-            <p>
-              Setup Fees are non-refundable once work has begun. Recurring Fees
-              are non-refundable for a period already started, except that if we
-              fail to deliver a month's Deliverables for reasons within our
-              control, we will credit or refund that month's Fee on a pro-rata
-              basis.
-            </p>
-            <h3>6.7 Price changes</h3>
-            <p>
-              We may change recurring Fees on at least 30 days' written notice.
-              If you do not agree, you may terminate under Section 13 before the
-              change takes effect.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>7. Third-Party Tools and Platforms</h2>
-            <p>
-              We deliver the Services using open-source software and third-party
-              platforms, including data providers, spreadsheet services, AI
-              model providers, and chatbot hosting platforms. Your use of any
-              Third-Party Tool you subscribe to is governed by that provider's
-              own terms.
-            </p>
-            <p>
-              We do not control Third-Party Tools and are not responsible for
-              their outages, changes, pricing, or discontinuation. If a
-              Third-Party Tool becomes unavailable or unsuitable, we may replace
-              it with an equivalent one and will tell you if the change
-              materially affects the Deliverables.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>8. Data Collection from Public Sources and Acceptable Use</h2>
-            <h3>8.1 Public Sources only</h3>
-            <p>
-              Our monitoring and reporting collect data only from Public
-              Sources. We do not log in to competitor accounts, access private
-              or paid areas, or collect personal data about individuals.
-            </p>
-            <h3>8.2 Right to decline</h3>
-            <p>
-              We may decline, pause, or stop collecting from any source if we
-              reasonably believe it could breach the law, a site's terms, or a
-              third party's rights. If this affects a competitor you named, we
-              will tell you and offer a replacement source or a pro-rata credit.
-            </p>
-            <h3>8.3 Competition law</h3>
-            <p>
-              You will use price and stock data only to make your own
-              independent pricing decisions. You will not use the Services to
-              agree, coordinate, or exchange prices with competitors, or for any
-              other conduct that breaches competition or antitrust law.
-            </p>
-            <h3>8.4 Prohibited use</h3>
-            <p>You will not use the Services or Deliverables to:</p>
-            <ul>
-              <li>Break the law or infringe another party's rights.</li>
-              <li>Deceive, harass, or spam anyone.</li>
-              <li>
-                Upload malware or attempt to disrupt or gain unauthorised access
-                to our systems or Third-Party Tools.
-              </li>
-              <li>
-                Reverse engineer, resell, or sublicense our methods,
-                configurations, or tools.
-              </li>
-              <li>
-                Present assistant output as professional legal, HR, medical, or
-                financial advice.
-              </li>
-            </ul>
-            <p>
-              We may suspend the Services immediately if you breach this
-              Section.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>9. AI-Generated Output</h2>
-            <p>
-              Some Deliverables, including assistant answers and report
-              summaries, are produced with artificial intelligence. AI output
-              can be incomplete, outdated, or wrong, and an assistant can only
-              answer as well as the documents it was given.
-            </p>
-            <p>
-              Output is for general business information. It is not legal, HR,
-              medical, tax, or financial advice. You are responsible for
-              reviewing output before relying on it, especially for decisions
-              affecting employees, customers, pricing, or compliance.
-            </p>
-            <p>
-              We select AI providers whose terms, where available, do not allow
-              them to train their models on your Client Materials. We cannot
-              guarantee how any provider handles data beyond its own terms.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>10. No Guarantee of Results</h2>
-            <p>
-              We do not guarantee any business outcome, including search
-              rankings, website traffic, sales, cost savings, competitive
-              position, or onboarding speed. Search engine algorithms,
-              competitor behaviour, and website changes are outside our control.
-            </p>
-            <p>
-              Price, stock, and ranking data reflect what was visible at the
-              time of collection and may be delayed, incomplete, or affected by
-              regional or personalised results. Time targets and example figures
-              on our website or in Proposals are estimates, not commitments.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>11. Intellectual Property</h2>
-            <h3>11.1 Your materials</h3>
-            <p>
-              You keep all rights in the Client Materials. You grant us a
-              limited, non-exclusive licence to use them only to provide the
-              Services to you.
-            </p>
-            <h3>11.2 Our materials</h3>
-            <p>
-              We keep all rights in our software, scripts, templates,
-              configurations, methods, and know-how, including anything we
-              create before or apart from your engagement (&ldquo;Our
-              Materials&rdquo;). Open-source components remain under their own
-              licences.
-            </p>
-            <h3>11.3 Licence to Deliverables</h3>
-            <p>
-              Once you have paid the applicable Fees, we grant you a
-              non-exclusive, non-transferable licence to use the Deliverables
-              for your internal business purposes for as long as you continue to
-              hold them. This does not transfer ownership of Our Materials, and
-              you may not resell the Deliverables.
-            </p>
-            <h3>11.4 Aggregated insights</h3>
-            <p>
-              We may use anonymised, aggregated statistics that cannot identify
-              you or your customers to improve our Services.
-            </p>
-            <h3>11.5 Feedback</h3>
-            <p>
-              You grant us a free, perpetual licence to use suggestions you give
-              us about the Services.
-            </p>
-            <h3>11.6 Publicity</h3>
-            <p>
-              We will not use your name or logo publicly without your written
-              consent.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>12. Client Data, Confidentiality, and Privacy</h2>
-            <h3>12.1 Confidentiality</h3>
-            <p>
-              Each party will keep the other's non-public business information
-              confidential, use it only for the Services, and share it only with
-              personnel and providers who need it and are bound by similar
-              duties. This does not cover information that is public through no
-              fault of the recipient, was already known to it, was independently
-              developed, or must be disclosed by law, in which case the
-              recipient will give prompt notice where permitted. These duties
-              last for three years after the Services end, and for trade secrets
-              as long as they remain secret.
-            </p>
-            <h3>12.2 Security</h3>
-            <p>
-              We use reasonable technical and organisational measures to protect
-              Client Materials, including access controls and a separate
-              assistant instance for each Client. We will notify you without
-              undue delay after confirming a security incident that affects your
-              Client Materials.
-            </p>
-            <h3>12.3 Personal data</h3>
-            <p>
-              Each party will comply with data protection laws that apply to it,
-              including India's Digital Personal Data Protection Act, 2023 and,
-              where relevant, the GDPR. If Client Materials contain personal
-              data, you confirm you have a lawful basis to share it, and we will
-              process it only on your instructions to provide the Services. We
-              will sign a data processing agreement on request.
-            </p>
-            <h3>12.4 Return and deletion</h3>
-            <p>
-              On request within 30 days after the Services end, we will return
-              your Client Materials in a standard format. We will then delete
-              them from our active systems within 30 days, and from backups
-              within 90 days, unless law requires us to keep them.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>13. Term and Termination</h2>
-            <h3>13.1 Term</h3>
-            <p>
-              Each Proposal starts on acceptance and, for recurring Services,
-              renews month to month until ended under this Section.
-            </p>
-            <h3>13.2 For convenience</h3>
-            <p>
-              Either party may end recurring Services on 30 days' written
-              notice, effective at the end of the billing period in which the
-              notice period expires.
-            </p>
-            <h3>13.3 For cause</h3>
-            <p>
-              Either party may end the agreement immediately by written notice
-              if the other commits a material breach and does not fix it within
-              14 days of notice, or becomes insolvent. We may end it immediately
-              if you breach Section 8.
-            </p>
-            <h3>13.4 Effects</h3>
-            <p>
-              On termination, we stop the Services and you pay all Fees due up
-              to the end date. We will deliver any completed Deliverables for
-              the period paid. Section 12.4 applies to your Client Materials.
-            </p>
-            <h3>13.5 Survival</h3>
-            <p>
-              Sections 6 (for unpaid amounts), 10 to 12, 14 to 16, 18, and 19
-              survive termination.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>14. Warranties and Disclaimers</h2>
-            <p>
-              We will perform the Services with reasonable skill and care. Each
-              party confirms it has authority to enter into this agreement.
-            </p>
-            <p>
-              Except as stated in these Terms, and to the fullest extent
-              permitted by law, the Services and Deliverables are provided
-              &ldquo;as is&rdquo; and &ldquo;as available&rdquo;. We disclaim
-              all other warranties, express or implied, including
-              merchantability, fitness for a particular purpose, accuracy, and
-              non-infringement. We do not warrant that the Services will be
-              uninterrupted or error-free.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>15. Limitation of Liability</h2>
-            <h3>15.1 Excluded losses</h3>
-            <p>
-              To the fullest extent permitted by law, neither party is liable
-              for indirect, incidental, special, or consequential loss, or for
-              loss of profit, revenue, goodwill, business opportunity, or data,
-              however caused and even if advised of the possibility.
-            </p>
-            <h3>15.2 Cap</h3>
-            <p>
-              Each party's total liability arising out of or relating to this
-              agreement is limited to the Fees you paid us in the six months
-              before the event giving rise to the claim.
-            </p>
-            <h3>15.3 Exceptions</h3>
-            <p>
-              Nothing in these Terms limits liability for fraud, wilful
-              misconduct, death or personal injury caused by negligence, your
-              obligation to pay Fees, or any liability that cannot be limited by
-              law. The cap in 15.2 also does not apply to a breach of Section
-              12.1 or to your indemnity in Section 16.
-            </p>
-            <h3>15.4 Basis of the bargain</h3>
-            <p>
-              You agree these limits reflect the price of the Services and are a
-              fair allocation of risk.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>16. Indemnification</h2>
-            <p>
-              You will defend and indemnify us, our personnel, and our providers
-              against third-party claims, and resulting losses and reasonable
-              legal costs, arising from: (a) Client Materials or our use of them
-              as permitted by these Terms; (b) your breach of Section 5 or
-              Section 8; or (c) your use of the Deliverables in breach of law.
-            </p>
-            <p>
-              We will give you prompt notice of a claim, let you control its
-              defence and settlement (but not settle in a way that admits fault
-              on our behalf without our consent), and reasonably cooperate at
-              your cost.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>17. Force Majeure</h2>
-            <p>
-              Neither party is liable for a delay or failure caused by events
-              beyond its reasonable control, including natural disaster, war,
-              civil unrest, government action, power or internet outages,
-              failure of Third-Party Tools or cloud providers, or changes to a
-              website that block collection. The affected party will tell the
-              other promptly and resume as soon as reasonably possible. This
-              does not excuse payment of Fees already due. If the event lasts
-              more than 30 days, either party may end the affected Services.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>18. Governing Law and Dispute Resolution</h2>
-            <h3>18.1 Governing law</h3>
-            <p>
-              These Terms are governed by the laws of India, without regard to
-              conflict-of-law rules.
-            </p>
-            <h3>18.2 Informal resolution</h3>
-            <p>
-              Before starting formal proceedings, the parties will try in good
-              faith to resolve a dispute through written notice and discussion
-              for 30 days.
-            </p>
-            <h3>18.3 Arbitration</h3>
-            <p>
-              Any dispute not resolved under 18.2 will be finally settled by
-              arbitration under the Arbitration and Conciliation Act, 1996.
-              There will be one arbitrator, the venue will be agreed by the
-              parties, and the language will be English. The award is final and
-              binding.
-            </p>
-            <h3>18.4 Urgent relief</h3>
-            <p>
-              Either party may seek an injunction or similar urgent relief from
-              a competent court to protect confidential information or
-              intellectual property.
-            </p>
-            <h3>18.5 Courts</h3>
-            <p>
-              Subject to 18.3, the competent courts have exclusive jurisdiction.
-            </p>
-          </section>
-
-          <section className="terms-section">
-            <h2>19. General Provisions</h2>
-            <ul>
-              <li>
-                <strong>Entire agreement:</strong> These Terms and your Proposal
-                are the whole agreement and replace earlier discussions and
-                proposals.
-              </li>
-              <li>
-                <strong>Changes to these Terms:</strong> We may update these
-                Terms. For existing Clients, changes take effect 30 days after
-                we notify you, and you may terminate under Section 13 if you
-                object. Changes to the website version apply to new engagements
-                from the date posted.
-              </li>
-              <li>
-                <strong>Order of precedence:</strong> The Proposal controls over
-                these Terms for that engagement only.
-              </li>
-              <li>
-                <strong>Severability:</strong> If a provision is unenforceable,
-                the rest remains in effect and the provision is limited to the
-                minimum extent necessary.
-              </li>
-              <li>
-                <strong>No waiver:</strong> Delay in enforcing a right is not a
-                waiver of it.
-              </li>
-              <li>
-                <strong>Assignment:</strong> You may not assign this agreement
-                without our written consent. We may assign it to an affiliate or
-                a successor to our business.
-              </li>
-              <li>
-                <strong>Independent contractors:</strong> The parties are
-                independent. Nothing creates a partnership, employment, or
-                agency relationship.
-              </li>
-              <li>
-                <strong>No third-party rights:</strong> Only the parties may
-                enforce this agreement.
-              </li>
-              <li>
-                <strong>Notices:</strong> Notices are valid if sent by email to
-                the addresses in the Proposal, and take effect when sent unless
-                a delivery failure notice is received.
-              </li>
-              <li>
-                <strong>Electronic acceptance:</strong> The parties may accept
-                and sign electronically and in counterparts.
-              </li>
-            </ul>
-          </section>
-
-          <div className="terms-footer">
-            <span className="eyebrow">Quoin Legal</span>
-            <a href="/" className="header-cta" onClick={openHome}>
-              Return to home
-            </a>
-          </div>
-        </div>
-      </main>
-    </div>
-  )
-}
+// Legal pages (TermsPage, PrivacyPage, RefundPage) imported from ./LegalPages
 
 export const scrapingServices = [
   {
     title: "Website Data Extraction",
     description:
-      "Extract specific information from websites and deliver it in a structured format.",
+      "Extract specific information from publicly accessible websites and deliver it in a structured format.",
   },
   {
     title: "Dynamic Web Scraping",
     description:
-      "Collect data from JavaScript-powered and dynamically rendered websites.",
+      "Extract data from JavaScript-powered and dynamically rendered websites where standard requests are not sufficient.",
   },
   {
     title: "Web Crawling",
     description:
-      "Discover and collect information across multiple pages or entire websites.",
+      "Discover and collect relevant information across multiple pages or larger website structures.",
   },
   {
     title: "Adaptive Scraping",
     description:
-      "Build resilient extraction workflows that can handle changes in website structure.",
+      "Build extraction workflows designed to remain resilient as supported website structures change.",
   },
   {
     title: "Browser-Based Scraping",
     description:
-      "Interact with websites through real browser environments when traditional requests are not enough.",
+      "Use browser-based workflows when pages require client-side rendering or browser interaction to expose publicly accessible content.",
   },
   {
     title: "API & Network Data",
     description:
-      "Capture publicly accessible data delivered through APIs and network requests.",
+      "Extract data exposed through publicly accessible APIs and web requests where appropriate.",
   },
   {
-    title: "E-Commerce Scraping",
+    title: "E-Commerce Data",
     description:
-      "Collect product details, pricing, availability, categories, ratings, and more.",
+      "Collect publicly available product details, pricing, availability, categories, ratings, and related information.",
   },
   {
     title: "Custom Data Extraction",
     description:
-      "Define exactly what information you need and receive a workflow built around your requirements.",
+      "Define the fields, sources, output format, and scale you need, and we build the extraction workflow around your requirements.",
   },
 ]
 
@@ -2579,7 +1983,7 @@ export const scrapingCapabilities = [
 
 export const scrapingAiUses = [
   "RAG datasets",
-  "Knowledge bases",
+  "Knowledge-base-ready datasets",
   "LLM-ready content",
   "Website-to-Markdown",
   "Structured AI data",
@@ -2597,21 +2001,28 @@ export const scrapingUseCases = [
 ]
 
 export const scrapingProcess = [
-  { step: "01", title: "Define", description: "Tell us what data you need." },
+  {
+    step: "01",
+    title: "Define",
+    description: "Define the sources, fields, requirements, and output format.",
+  },
   {
     step: "02",
     title: "Extract",
-    description: "We collect information from your approved target sources.",
+    description:
+      "We extract information from the approved publicly accessible target sources.",
   },
   {
     step: "03",
     title: "Structure",
-    description: "Raw information is cleaned and organized into usable data.",
+    description:
+      "Raw information is cleaned, normalized, and organized into usable data.",
   },
   {
     step: "04",
     title: "Deliver",
-    description: "Receive your dataset in the format your workflow needs.",
+    description:
+      "Receive the resulting dataset in the format your workflow needs.",
   },
 ]
 
@@ -2696,8 +2107,8 @@ export function ScrapingPage({
         {/* 1. Hero Section */}
         <section className="scraping-hero">
           <div className="section-meta">
-            <span>01 — Web scraping</span>
-            <span>Custom and recurring extraction</span>
+            <span>01 — Web Scraping / Custom and recurring extraction</span>
+            <span aria-hidden="true" />
           </div>
           <div className="scraping-hero-grid">
             <div>
@@ -2726,7 +2137,7 @@ export function ScrapingPage({
               <span aria-hidden="true">W</span>
               <div>
                 <small>Delivery formats</small>
-                <strong>JSON · CSV · XML · Markdown</strong>
+                <strong>JSON · CSV · XML · JSONL · Markdown</strong>
               </div>
             </aside>
           </div>
@@ -2736,7 +2147,7 @@ export function ScrapingPage({
         <section className="scraping-intro scraping-section">
           <div className="section-meta">
             <span>02 — What we do</span>
-            <span>Extract · Structure · Deliver</span>
+            <span>Extract. Structure. Deliver.</span>
           </div>
           <div className="scraping-split-heading">
             <h2>
@@ -2745,9 +2156,9 @@ export function ScrapingPage({
               Deliver.
             </h2>
             <p>
-              We collect and transform web data into organized datasets tailored
-              to your requirements—from individual pages to large-scale
-              websites.
+              We extract, clean, and structure publicly accessible web data into
+              organized datasets built around your requirements—from individual
+              pages to large-scale websites.
             </p>
           </div>
         </section>
@@ -2774,7 +2185,7 @@ export function ScrapingPage({
         <section className="scraping-section scraping-capabilities">
           <div className="section-meta">
             <span>04 — Capabilities</span>
-            <span>Fields configured to your brief</span>
+            <span>Fields configured to your requirements</span>
           </div>
           <div className="scraping-split-heading">
             <h2>
@@ -2799,8 +2210,9 @@ export function ScrapingPage({
             <h2>Built for different data needs.</h2>
             <h3>Single page → Entire website</h3>
             <p>
-              From extracting a handful of fields from one page to crawling
-              thousands of pages, the workflow is tailored to your project.
+              From extracting a defined set of fields from a single page to
+              crawling thousands of publicly accessible pages, the workflow is
+              configured around your requirements, source structure, and scale.
             </p>
           </article>
           <article>
@@ -2810,11 +2222,11 @@ export function ScrapingPage({
             <h2>Data that fits your workflow.</h2>
             <h3>Your data. Your format.</h3>
             <p>
-              Receive extracted information in formats that connect cleanly with
-              the systems your team already uses.
+              Receive structured output in formats that fit the systems,
+              analysis workflows, or AI pipelines you already use.
             </p>
             <div className="scraping-format">
-              JSON · CSV · XML · JSONL · Markdown · HTML
+              JSON · CSV · XML · JSONL · Markdown
             </div>
           </article>
         </section>
@@ -2828,10 +2240,10 @@ export function ScrapingPage({
           <div className="scraping-insight-grid">
             <article>
               <p className="eyebrow">AI-ready knowledge</p>
-              <h2>Turn the web into structured context.</h2>
+              <h2>Turn public web content into structured context.</h2>
               <p>
-                Collect, clean, and structure web content for modern AI
-                workflows.
+                Collect, clean, and structure publicly accessible web content
+                for modern AI workflows.
               </p>
               <ul>
                 {scrapingAiUses.map((item) => (
@@ -2865,7 +2277,8 @@ export function ScrapingPage({
             </h2>
             <p>
               A defined workflow keeps extraction requirements, source
-              boundaries, and delivery formats clear from the start.
+              boundaries, data fields, and delivery formats clear from the
+              start.
             </p>
           </div>
           <div className="scraping-process-grid">
@@ -2888,9 +2301,9 @@ export function ScrapingPage({
             need to extract?
           </h2>
           <p>
-            Every website is different. We can build an extraction workflow
-            around your target source, required fields, output format, and
-            scale.
+            Every website and dataset has different requirements. We can build
+            an extraction workflow around your target sources, required fields,
+            output format, and scale.
           </p>
           <a
             href="/consultation"
@@ -2902,20 +2315,39 @@ export function ScrapingPage({
 
         {/* Footer */}
         <footer className="scraping-footer">
-          <a
-            href="/"
-            className="wordmark"
-            aria-label="quion home"
-            onClick={(event) => leavePage(event, "/")}
-          >
-            <BrandLogo />
-          </a>
-          <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
-            Terms &amp; conditions
-          </a>
-          <a href="/" onClick={(event) => leavePage(event, "/")}>
-            Return home <Arrow />
-          </a>
+          <div className="footer-left">
+            <a
+              href="/"
+              className="wordmark"
+              aria-label="quion home"
+              onClick={(event) => leavePage(event, "/")}
+            >
+              <BrandLogo />
+            </a>
+            <span className="footer-copyright">
+              &copy; 2026 Quion. All rights reserved.
+            </span>
+          </div>
+          <div className="footer-legal">
+            <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
+              Terms &amp; Conditions
+            </a>
+            <span className="footer-sep" aria-hidden="true">
+              ·
+            </span>
+            <a
+              href="/privacy"
+              onClick={(event) => leavePage(event, "/privacy")}
+            >
+              Privacy Policy
+            </a>
+            <span className="footer-sep" aria-hidden="true">
+              ·
+            </span>
+            <a href="/refund" onClick={(event) => leavePage(event, "/refund")}>
+              Refund Policy
+            </a>
+          </div>
         </footer>
       </main>
     </div>
@@ -2925,26 +2357,21 @@ export function ScrapingPage({
 export const ScrapingContent = ScrapingPage
 
 export const knowledgeTags = [
-  "RAG",
   "Knowledge Bases",
+  "RAG",
+  "Semantic Search",
   "AI Agents",
   "AI Workflows",
   "Document Processing",
-  "Semantic Search",
-  "Contextual Answers",
-  "Multi-Model AI",
   "API Integration",
   "MCP",
-  "Self-Hosted AI",
-  "LLMOps",
-  "Custom Tools",
-  "Enterprise Knowledge",
-  "AI Automation",
+  "Multi-Model AI",
+  "Self-Hosting",
 ]
 
 export const knowledgeSources = [
-  "Internal documentation",
-  "Company policies",
+  "Internal documents",
+  "Policies",
   "SOPs",
   "Employee handbooks",
   "Product documentation",
@@ -2959,57 +2386,57 @@ export const knowledgeFeatures = [
   {
     title: "Knowledge Base",
     description:
-      "Centralize your organization's information into searchable knowledge bases.",
+      "Centralize your organization's information into structured, searchable knowledge bases.",
   },
   {
-    title: "Intelligent Q&A",
+    title: "Intelligent Search & Q&A",
     description:
-      "Ask questions naturally and receive answers based on your organization's knowledge.",
+      "Search naturally and receive answers grounded in your organization's approved knowledge.",
   },
   {
     title: "Document Understanding",
     description:
-      "Process and retrieve information from PDFs, presentations, and other supported formats.",
+      "Process and retrieve information from PDFs, presentations, and structured formats.",
   },
   {
     title: "Context-Aware Responses",
     description:
-      "Give the assistant relevant context before generating an answer.",
+      "Provide relevant organizational context to ground responses before generation.",
   },
   {
     title: "Multiple Knowledge Sources",
     description:
-      "Organize information across departments, projects, and knowledge collections.",
+      "Organize information across departments, teams, projects, and document collections.",
   },
   {
     title: "Source-Aware Answers",
     description:
-      "Provide references to the information used so users can verify each response.",
+      "Reference source documents and sections so your team can verify information directly.",
   },
   {
     title: "Conversational Interface",
     description:
-      "Let employees interact with company knowledge through a familiar chat experience.",
+      "Let employees interact with company knowledge through an intuitive chat experience.",
   },
   {
     title: "Custom AI Models",
     description:
-      "Connect the assistant to the AI model that best fits your requirements.",
+      "Connect and configure the assistant with the AI models that best match your workload.",
   },
 ]
 
 export const knowledgeConnections = [
-  "PDF documents",
+  "PDFs",
   "Presentations",
   "Text documents",
   "FAQs",
-  "Internal documentation",
+  "Internal documents",
   "Product manuals",
   "Company policies",
   "SOPs",
   "Knowledge bases",
   "Structured datasets",
-  "External data sources",
+  "External knowledge sources",
 ]
 
 export const knowledgeWorkflows = [
@@ -3038,28 +2465,32 @@ export const knowledgeTeams = [
   {
     title: "HR",
     description:
-      "Policies, employee guidelines, onboarding, and internal processes.",
+      "Policies, employee guidelines, onboarding materials, and internal processes.",
   },
   {
     title: "Support",
-    description: "Product documentation, troubleshooting guides, and FAQs.",
+    description:
+      "Product documentation, troubleshooting guides, and service FAQs.",
   },
   {
     title: "Engineering",
     description:
-      "Technical documentation, APIs, architecture, and development knowledge.",
+      "Technical documentation, APIs, architecture, and development standards.",
   },
   {
     title: "Sales",
-    description: "Product information, sales material, and internal resources.",
+    description:
+      "Product specifications, sales enablement materials, and internal resources.",
   },
   {
     title: "Operations",
-    description: "SOPs, workflows, procedures, and operational documentation.",
+    description:
+      "SOPs, workflows, operational procedures, and execution guidelines.",
   },
   {
     title: "Management",
-    description: "Company information, reports, and internal knowledge.",
+    description:
+      "Company information, internal reports, and departmental knowledge.",
   },
 ]
 
@@ -3081,8 +2512,8 @@ export const knowledgeSecurity = [
   "Controlled knowledge access",
   "Private data environment",
   "Custom authentication",
-  "API-based integration",
-  "Configurable AI workflows",
+  "API integration",
+  "Configurable workflows",
 ]
 
 export const knowledgeIntegrations = [
@@ -3124,30 +2555,30 @@ export const knowledgeProcess = [
   {
     step: "01",
     title: "Connect",
-    description: "Provide your organization's documents and knowledge sources.",
+    description:
+      "Bring the organization's approved knowledge sources together.",
   },
   {
     step: "02",
     title: "Organize",
-    description: "Structure information into searchable knowledge bases.",
+    description: "Structure and prepare information for retrieval.",
   },
   {
     step: "03",
     title: "Understand",
     description:
-      "The system processes and indexes your knowledge for retrieval.",
+      "Configure the assistant, retrieval behavior, models, prompts, and workflows around the organization's requirements.",
   },
   {
     step: "04",
     title: "Ask",
-    description:
-      "Employees interact with the assistant using natural language.",
+    description: "Team members ask questions using a conversational interface.",
   },
   {
     step: "05",
     title: "Answer",
     description:
-      "The assistant retrieves relevant information and generates a contextual response.",
+      "The assistant retrieves relevant context and provides a grounded response, with sources where configured.",
   },
 ]
 
@@ -3230,7 +2661,7 @@ export function KnowledgeAssistantContent({
         <section className="knowledge-hero">
           <div className="section-meta">
             <span>01 — Internal Knowledge Assistant</span>
-            <span>Private organizational knowledge</span>
+            <span>Turn organizational knowledge into an AI interface</span>
           </div>
           <div className="knowledge-hero-grid">
             <div>
@@ -3239,12 +2670,12 @@ export function KnowledgeAssistantContent({
               </p>
               <h1>Internal Knowledge Assistant.</h1>
               <h2>
-                Your company’s knowledge, available through a conversation.
+                Your organization’s knowledge, available through a conversation.
               </h2>
               <p>
                 Turn internal documents, processes, policies, and knowledge into
-                an AI-powered assistant that can answer questions, find
-                information, and help your team get work done.
+                an AI-powered assistant that helps your team find information,
+                understand it, and act on it.
               </p>
               <a
                 href="/consultation"
@@ -3256,7 +2687,7 @@ export function KnowledgeAssistantContent({
             {/* Interactive Chat Mockup Window */}
             <aside className="knowledge-chat" aria-label="Assistant example">
               <div className="knowledge-chat-head">
-                <span>Quoin Knowledge</span>
+                <span>Quion Knowledge</span>
                 <i aria-hidden="true" />
               </div>
               <div className="knowledge-message is-question">
@@ -3268,7 +2699,7 @@ export function KnowledgeAssistantContent({
                   The remote-work policy is documented in the Employee Handbook
                   under Workplace Guidelines.
                 </p>
-                <small>Employee Handbook · Source verified</small>
+                <small>Employee Handbook · Source</small>
               </div>
               <div className="knowledge-chat-input">
                 Ask your company knowledge
@@ -3287,18 +2718,19 @@ export function KnowledgeAssistantContent({
         <section className="knowledge-section">
           <div className="section-meta">
             <span>02 — What we build</span>
-            <span>One place for your team’s knowledge</span>
+            <span>Bring scattered knowledge into one system</span>
           </div>
           <div className="knowledge-split">
             <h2>
-              One place for your
+              Bring scattered knowledge
               <br />
-              team’s knowledge.
+              into one system.
             </h2>
             <div>
               <p>
-                Connect your organization’s knowledge sources and give your team
-                a simple way to find the information they need.
+                Quion takes knowledge distributed across documents and internal
+                resources and turns it into a structured, searchable AI
+                knowledge layer.
               </p>
               <ItemList items={knowledgeSources} className="knowledge-list" />
             </div>
@@ -3324,13 +2756,13 @@ export function KnowledgeAssistantContent({
         <section className="knowledge-dark-section">
           <div className="section-meta">
             <span>04 — What you can connect</span>
-            <span>Bring your knowledge with you</span>
+            <span>Connect the knowledge your team already uses</span>
           </div>
           <div className="knowledge-dark-grid">
             <h2>
-              Bring your
+              Connect the knowledge
               <br />
-              knowledge with you.
+              your team already uses.
             </h2>
             <ItemList
               items={knowledgeConnections}
@@ -3344,31 +2776,24 @@ export function KnowledgeAssistantContent({
             <div className="section-meta">
               <span>05 — AI workflows</span>
             </div>
-            <h2>More than questions and answers.</h2>
+            <h2>Go beyond questions and answers.</h2>
             <p>
-              Build automated AI workflows around your organization’s knowledge.
+              Quion configures multi-step AI workflows tailored to your team’s
+              document and operational requirements.
             </p>
             <ItemList items={knowledgeWorkflows} className="knowledge-list" />
-            <p className="knowledge-evidence">
-              Dify supports visual workflow construction and testing.
-              <span>Source: GitHub</span>
-            </p>
           </article>
           <article>
             <div className="section-meta">
               <span>06 — AI agents</span>
             </div>
-            <h2>Give your assistant the ability to act.</h2>
+            <h2>Go beyond answers.</h2>
             <p>
-              Go beyond answers by connecting AI agents with tools and external
-              services.
+              Connect the assistant to approved tools, APIs, and business
+              systems so it can perform defined tasks within the workflows you
+              configure.
             </p>
             <ItemList items={knowledgeAgents} className="knowledge-list" />
-            <p className="knowledge-evidence">
-              Dify supports agents with tools, APIs, MCP servers, and
-              marketplace integrations.
-              <span>Source: GitHub</span>
-            </p>
           </article>
         </section>
         {/* 7. Teams Grid */}
@@ -3384,8 +2809,8 @@ export function KnowledgeAssistantContent({
               Multiple teams.
             </h2>
             <p>
-              Create focused knowledge experiences for different parts of your
-              organization.
+              Configured around your organization’s knowledge, access
+              requirements, and workflows.
             </p>
           </div>
           <div className="knowledge-team-grid">
@@ -3404,15 +2829,10 @@ export function KnowledgeAssistantContent({
             <div className="section-meta">
               <span>08 — AI capabilities</span>
             </div>
-            <h2>Adapt the assistant to your business.</h2>
+            <h2>Configure the assistant around your business.</h2>
             <p>
               Configure models, instructions, outputs, and workflows around your
-              requirements.
-            </p>
-            <p className="knowledge-evidence">
-              Dify supports proprietary, open-source, and self-hosted model
-              providers.
-              <span>Source: GitHub</span>
+              organization’s specific requirements.
             </p>
           </div>
           <ItemList
@@ -3424,22 +2844,18 @@ export function KnowledgeAssistantContent({
         <section className="knowledge-dark-section knowledge-security-section">
           <div className="section-meta">
             <span>09 — Security and control</span>
-            <span>Private infrastructure options</span>
+            <span>Deployment options for different security requirements</span>
           </div>
           <div className="knowledge-dark-grid">
             <div>
               <h2>
-                Keep your knowledge
+                Keep control over how
                 <br />
-                under control.
+                your knowledge is deployed and accessed.
               </h2>
               <p>
-                For organizations that need greater control over their AI
-                infrastructure and data environment.
-              </p>
-              <p className="knowledge-evidence">
-                Dify supports self-hosted, cloud, and VPC deployment options.
-                <span>Source: GitHub</span>
+                Deployment options and access controls tailored to your
+                technical environment and governance requirements.
               </p>
             </div>
             <ItemList
@@ -3454,31 +2870,29 @@ export function KnowledgeAssistantContent({
             <div className="section-meta">
               <span>10 — Integrations</span>
             </div>
-            <h2>Connect AI to your existing stack.</h2>
+            <h2>
+              Connect the assistant to the systems your team already uses.
+            </h2>
+            <p>
+              Integration capabilities configured by Quion based on your
+              existing software architecture and operational requirements.
+            </p>
             <ItemList
               items={knowledgeIntegrations}
               className="knowledge-list"
             />
-            <p className="knowledge-evidence">
-              Dify exposes APIs that integrate with applications and business
-              logic.
-              <span>Source: GitHub</span>
-            </p>
           </article>
           <article>
             <div className="section-meta">
               <span>11 — Monitoring</span>
             </div>
-            <h2>Understand how your assistant performs.</h2>
+            <h2>Measure, evaluate, and improve.</h2>
             <p>
-              Monitor usage and improve the assistant’s performance over time.
+              Monitor how the assistant performs, identify areas for
+              improvement, and continuously refine its knowledge, prompts,
+              workflows, and models.
             </p>
             <ItemList items={knowledgeMonitoring} className="knowledge-list" />
-            <p className="knowledge-evidence">
-              Dify includes LLMOps capabilities for application performance and
-              log analysis.
-              <span>Source: GitHub</span>
-            </p>
           </article>
         </section>
         {/* 11. Use Cases Chips */}
@@ -3512,8 +2926,8 @@ export function KnowledgeAssistantContent({
               to answers.
             </h2>
             <p>
-              A controlled five-stage system for connecting, retrieving, and
-              answering from organizational knowledge.
+              A structured five-stage process for connecting, organizing, and
+              retrieving organizational knowledge.
             </p>
           </div>
           <div className="knowledge-process-grid">
@@ -3536,8 +2950,9 @@ export function KnowledgeAssistantContent({
               organization.
             </h2>
             <p>
-              Every organization has different information, workflows, and
-              requirements. We configure the assistant around yours.
+              Every organization has different information, workflows, access
+              requirements, and systems. Quion configures the assistant around
+              yours.
             </p>
             <a
               href="/consultation"
@@ -3553,20 +2968,39 @@ export function KnowledgeAssistantContent({
         </section>
         {/* Footer */}
         <footer className="scraping-footer">
-          <a
-            href="/"
-            className="wordmark"
-            aria-label="quion home"
-            onClick={(event) => leavePage(event, "/")}
-          >
-            <BrandLogo />
-          </a>
-          <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
-            Terms &amp; conditions
-          </a>
-          <a href="/" onClick={(event) => leavePage(event, "/")}>
-            Return home <Arrow />
-          </a>
+          <div className="footer-left">
+            <a
+              href="/"
+              className="wordmark"
+              aria-label="quion home"
+              onClick={(event) => leavePage(event, "/")}
+            >
+              <BrandLogo />
+            </a>
+            <span className="footer-copyright">
+              &copy; 2026 Quion. All rights reserved.
+            </span>
+          </div>
+          <div className="footer-legal">
+            <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
+              Terms &amp; Conditions
+            </a>
+            <span className="footer-sep" aria-hidden="true">
+              ·
+            </span>
+            <a
+              href="/privacy"
+              onClick={(event) => leavePage(event, "/privacy")}
+            >
+              Privacy Policy
+            </a>
+            <span className="footer-sep" aria-hidden="true">
+              ·
+            </span>
+            <a href="/refund" onClick={(event) => leavePage(event, "/refund")}>
+              Refund Policy
+            </a>
+          </div>
         </footer>
       </main>
     </div>
@@ -3587,7 +3021,7 @@ export const seoTags = [
   "Local SEO",
   "SERP Research",
   "Google Search Console",
-  "Google Analytics",
+  "Search Signals",
   "MCP",
   "AI Agents",
   "Prompt Tracking",
@@ -3600,42 +3034,42 @@ export const seoServices = [
   {
     title: "Keyword Research",
     description:
-      "Discover keywords worth targeting and research their search volume, metrics, and related opportunities.",
+      "Discover keyword opportunities using search volume, difficulty, CPC, intent, and related search data.",
   },
   {
     title: "Rank Tracking",
     description:
-      "Monitor keyword positions in search results over time with location-specific tracking.",
+      "Track keyword positions over time across configured search engines, locations, and target keywords.",
   },
   {
     title: "Competitor Insights",
     description:
-      "Explore competitor search visibility, keyword rankings, and SEO performance data.",
+      "Compare competitor visibility, rankings, keywords, and search performance across a defined market.",
   },
   {
     title: "Backlink Analysis",
     description:
-      "Understand the backlink profile of any website and discover new link opportunities.",
+      "Analyze backlink data, referring domains, and link profiles to understand a website’s link profile and identify relevant opportunities.",
   },
   {
     title: "Website SEO Audits",
     description:
-      "Crawl and analyze your website for technical SEO issues and improvement opportunities.",
+      "Analyze websites for technical SEO issues, crawlability problems, metadata issues, and other configurable audit signals.",
   },
   {
     title: "AI Visibility Tracking",
     description:
-      "Monitor how your brand appears in AI-generated answers across ChatGPT, Gemini, and Google AI Overviews.",
+      "Monitor brand mentions and citations in AI-generated answers using configured prompts and supported AI-search data sources.",
   },
   {
     title: "Local SEO Research",
     description:
-      "Understand how your business performs in local search for specific cities, counties, and regions.",
+      "Research local search visibility and business results for defined locations and target queries.",
   },
   {
     title: "SERP Research",
     description:
-      "Analyze search engine results pages to understand content format, intent, and ranking factors.",
+      "Inspect search results to understand ranking pages, SERP features, search intent, and competitive patterns.",
   },
 ]
 
@@ -3647,49 +3081,44 @@ export const seoSignals = [
   "Ranking history",
   "SERP features",
   "Backlink metrics",
-  "Domain authority",
-  "Page authority",
-  "Organic traffic",
+  "Domain metrics",
+  "Organic clicks",
   "Click-through rate",
   "Impressions",
-  "Core Web Vitals",
-  "Mobile usability",
   "Crawl errors",
   "AI citations",
 ]
 
 export const seoDataSources = [
   "Google Search Console",
-  "Google Analytics",
-  "Google Discover data",
-  "Google News data",
   "Organic search results",
-  "SERP result pages",
-  "Backlink databases",
+  "SERP result data",
+  "Keyword search data",
+  "Backlink data",
   "Domain metrics",
   "Competitor domains",
-  "Local listing data",
+  "Local search results",
+  "AI search visibility data",
 ]
 
 export const seoAiWorkflows = [
   "AI-assisted keyword clustering",
   "Automated rank reporting",
-  "AI-generated SEO reports",
+  "AI-assisted SEO reports",
   "Content gap analysis",
   "Competitor monitoring",
-  "Automated audit alerts",
-  "Scheduled data exports",
-  "Custom AI agents",
-  "Multi-step SEO pipelines",
+  "Audit summaries",
+  "Scheduled data collection",
+  "Custom AI workflows",
+  "Multi-step SEO analysis",
 ]
 
 export const seoMcpCapabilities = [
   "MCP server integration",
   "AI agent access to SEO data",
-  "Real-time keyword queries",
+  "Configured keyword queries",
   "Automated audit triggers",
   "Search Console via MCP",
-  "Analytics data via MCP",
   "Custom tooling",
 ]
 
@@ -3697,46 +3126,36 @@ export const seoSearchTypes = [
   {
     title: "Local SEO",
     description:
-      "Rank tracking and keyword research segmented by city, county, and country.",
+      "Research local rankings and business results for defined cities, regions, and target queries.",
   },
   {
     title: "Organic Search",
     description:
-      "Core web search visibility across Google and other major search engines.",
+      "Track keyword rankings and search visibility across configured organic search results.",
   },
   {
     title: "AI Search",
     description:
-      "Brand visibility and citation tracking in AI-generated search answers.",
-  },
-  {
-    title: "News & Discover",
-    description:
-      "Track how your content surfaces in Google News and Discover feeds.",
-  },
-  {
-    title: "Image & Video",
-    description:
-      "Understand how your media assets perform in image and video search results.",
+      "Monitor brand visibility, mentions, and citations in supported AI-generated search answers.",
   },
   {
     title: "SERP Features",
     description:
-      "Monitor featured snippets, knowledge panels, and other enriched SERP elements.",
+      "Analyze featured snippets and other available search-result features that affect visibility.",
   },
 ]
 
 export const seoAiCapabilities = [
-  "AI-generated keyword reports",
+  "AI-assisted keyword reports",
   "Automated rank monitoring",
-  "Competitor tracking pipelines",
-  "AI-assisted site audits",
+  "Competitor analysis workflows",
+  "AI-assisted site audit summaries",
   "Content gap identification",
-  "Trend detection & alerts",
-  "Multi-model AI support",
-  "Search Console automation",
-  "Custom AI agent workflows",
-  "MCP server integration",
+  "Trend detection",
+  "Search signal alerts",
+  "AI-assisted reporting",
+  "Custom AI workflows",
+  "MCP integrations",
 ]
 
 export const seoUseCases = [
@@ -3747,11 +3166,11 @@ export const seoUseCases = [
   "E-commerce brands",
   "SaaS companies",
   "Local businesses",
-  "Enterprise marketing",
-  "Competitor monitoring",
+  "Growth teams",
+  "Competitor research",
   "AI-assisted SEO",
-  "Marketing automation",
-  "B2B lead generation",
+  "Marketing intelligence",
+  "Search performance monitoring",
 ]
 
 export const seoProcess = [
@@ -3759,27 +3178,31 @@ export const seoProcess = [
     step: "01",
     title: "Scope",
     description:
-      "Define target keywords, competitors, and locations to monitor.",
+      "Define target keywords, competitors, locations, and search objectives.",
   },
   {
     step: "02",
     title: "Configure",
-    description: "Connect data sources and configure tracking workflows.",
+    description:
+      "Connect supported data sources and configure the tracking and reporting workflow.",
   },
   {
     step: "03",
     title: "Collect",
-    description: "Gather ranking data, backlinks, and SEO signals on schedule.",
+    description:
+      "Gather search rankings, SERP data, backlink signals, and other configured SEO data.",
   },
   {
     step: "04",
     title: "Analyze",
-    description: "Surface trends, opportunities, and issues from the data.",
+    description:
+      "Identify trends, opportunities, competitive changes, and technical issues.",
   },
   {
     step: "05",
     title: "Report",
-    description: "Deliver structured insights in the format your team needs.",
+    description:
+      "Deliver structured search intelligence in the format and cadence your team needs.",
   },
 ]
 
@@ -3788,39 +3211,40 @@ export const seoCustomOptions = [
   "Tracked locations",
   "Competitor domains",
   "Data sources",
-  "Report cadence",
-  "AI model choice",
+  "Reporting cadence",
+  "AI workflow requirements",
   "Delivery format",
-  "Integration points",
+  "Integration requirements",
 ]
 
 export const seoTechnicalAudit = [
-  "Core Web Vitals telemetry",
-  "Robots.txt & XML sitemap parsing",
-  "Canonical tag conflict detection",
-  "Schema.org structured data audit",
-  "Internal crawl depth & PageRank distribution",
-  "Mobile viewport rendering checks",
-  "404 & redirect chain diagnostics",
-  "Hreflang internationalization checks",
+  "Robots.txt & XML sitemap analysis",
+  "Canonical tag checks",
+  "Schema.org structured data checks",
+  "Internal linking analysis",
+  "Crawl depth analysis",
+  "Metadata checks",
+  "404 & redirect diagnostics",
+  "Hreflang checks",
 ]
 
 export const seoIntegrations = [
-  "Google Search Console API",
-  "Google Analytics 4 (GA4)",
-  "BigQuery raw export warehouse",
-  "Slack & Microsoft Teams anomaly alerts",
-  "Looker Studio & Tableau dashboards",
-  "Custom REST & MCP endpoints",
+  "Google Search Console",
+  "MCP",
+  "REST API endpoints",
+  "Webhooks",
+  "Structured data exports",
+  "Custom integrations",
 ]
 
 export const seoMonitoring = [
-  "Automated rank volatility alerts",
-  "Competitor position change digests",
-  "SERP feature capture & archiving",
-  "Lost & gained backlink tracking",
-  "Algorithmic penalty detection",
-  "AI Overview citation monitoring",
+  "Rank change monitoring",
+  "Competitor position changes",
+  "SERP feature monitoring",
+  "Backlink changes",
+  "AI visibility monitoring",
+  "Ranking and visibility change detection",
+  "Threshold-based alerts",
 ]
 
 const heroKeywords = [
@@ -3834,9 +3258,9 @@ const heroKeywords = [
     features: ["Featured Snippet", "AI Overview Cited", "Sitelinks"],
     aioCited: true,
     aioQuote:
-      "Quoin provides reliable, automated public web extraction pipelines with structured JSON/CSV delivery.",
+      "Automated public web extraction pipelines provide structured data delivery for operational analytics.",
     snippet:
-      "Enterprise data extraction and web crawling infrastructure. Structured, clean datasets delivered directly to your database, S3, or analytical warehouse on schedule.",
+      "Sample search result: Enterprise data extraction and web crawling infrastructure. Structured, clean datasets delivered directly to your database, S3, or analytical warehouse on schedule.",
     slug: "intelligence/b2b-extraction",
   },
   {
@@ -3849,9 +3273,9 @@ const heroKeywords = [
     features: ["People Also Ask", "AI Overview Cited", "Knowledge Panel"],
     aioCited: true,
     aioQuote:
-      "Quoin Knowledge Assistant turns company documents and SOPs into grounded conversational intelligence.",
+      "Internal knowledge assistants organize company documentation and SOPs into conversational search.",
     snippet:
-      "Transform internal documentation, SOPs, and employee handbooks into an AI-powered conversational assistant with verified source citations and role permissions.",
+      "Sample search result: Transform internal documentation, SOPs, and employee handbooks into an AI-powered conversational assistant with verified source citations and role permissions.",
     slug: "systems/internal-knowledge",
   },
   {
@@ -3865,7 +3289,7 @@ const heroKeywords = [
     aioCited: false,
     aioQuote: "Rank tracking with localized geo-fenced precision.",
     snippet:
-      "Continuous SERP position tracking and competitor ranking intelligence across Google, Bing, and local markets with automated change notifications.",
+      "Sample search result: Continuous SERP position tracking and competitor ranking intelligence across Google, Bing, and local markets with automated change notifications.",
     slug: "search/rank-tracking",
   },
   {
@@ -3878,9 +3302,9 @@ const heroKeywords = [
     features: ["AI Overview", "Featured Snippet", "FAQ"],
     aioCited: true,
     aioQuote:
-      "Monitors brand sentiment and citation presence across ChatGPT, Perplexity, Gemini, and Google SGE.",
+      "Monitors brand sentiment and citation presence across supported generative search engines.",
     snippet:
-      "Track brand presence in AI-generated answers. Understand citation sources, prompt triggers, and optimize for generative search visibility.",
+      "Sample search result: Track brand presence in AI-generated answers. Understand citation sources, prompt triggers, and analyze generative search visibility.",
     slug: "search/ai-visibility",
   },
 ]
@@ -3949,34 +3373,35 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
           <div className="knowledge-hero-grid">
             <div>
               <p className="eyebrow">
-                Search Intelligence / Continuous Signals
+                Search Intelligence / Scheduled insights
               </p>
               <h1>SEO &amp; Search Intelligence.</h1>
               <h2>
-                Search visibility, rankings, and SERP signals on schedule.
+                Search visibility, rankings, and search signals—structured
+                around your goals.
               </h2>
               <p>
-                Monitor keyword positions, audit search engines, track
-                competitor SERP movements, and measure brand citations across
-                traditional search and AI Overviews.
+                Research keywords, track rankings, analyze competitors, audit
+                websites, and monitor how your brand appears across search and
+                AI-generated answers.
               </p>
               <a
                 href="/consultation"
                 onClick={(event) => leavePage(event, "/consultation")}
               >
-                Configure search intelligence <Arrow />
+                Build your search intelligence <Arrow />
               </a>
             </div>
 
             {/* Interactive SERP Inspector Widget */}
             <aside
               className="seo-serp-widget"
-              aria-label="Live Search Intelligence Monitor"
+              aria-label="Sample Search Intelligence Monitor"
             >
               <div className="seo-serp-head">
                 <div className="seo-serp-title-group">
                   <i aria-hidden="true" />
-                  <span>Quoin SERP Telemetry</span>
+                  <span>Quion Search Intelligence</span>
                 </div>
                 <div className="seo-engine-pills">
                   <button
@@ -4070,18 +3495,17 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
               {/* SERP Result Preview */}
               <div className="seo-serp-preview-card">
                 <div className="seo-serp-url">
-                  <span className="seo-serp-favicon">Q</span>
-                  <span>quoin.io › {currentKeyword.slug}</span>
+                  <span className="seo-serp-favicon">S</span>
+                  <span>example.com › {currentKeyword.slug}</span>
                 </div>
                 <div className="seo-serp-headline">
-                  Quoin® Operational Intelligence — Automated SERP &amp; Market
-                  Feeds
+                  Search Intelligence &amp; Ranking Data — Sample Result
                 </div>
                 <p className="seo-serp-snippet">{currentKeyword.snippet}</p>
 
                 {(activeEngine === "aio" || currentKeyword.aioCited) && (
                   <div className="seo-aio-box">
-                    <strong>★ Google AI Overview Citation (Verified)</strong>
+                    <strong>★ Sample AI Overview Citation</strong>
                     <span>"{currentKeyword.aioQuote}"</span>
                   </div>
                 )}
@@ -4125,13 +3549,14 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
             <h2>
               Discover. Track.
               <br />
-              Outrank.
+              Understand.
             </h2>
             <div>
               <p>
-                From keyword rankings and competitor visibility to technical
-                health and AI Overviews, we collect and structure the search
-                signals your team needs.
+                From keyword research and ranking data to competitor visibility,
+                backlinks, technical audits, and AI search signals, we collect
+                and structure the data your team needs to make better search
+                decisions.
               </p>
               <ItemList items={seoSignals} className="knowledge-list" />
             </div>
@@ -4177,33 +3602,25 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
             <div className="section-meta">
               <span>05 — AI workflows</span>
             </div>
-            <h2>Automated rank intelligence.</h2>
+            <h2>AI-assisted search intelligence.</h2>
             <p>
-              Deploy continuous AI workflows that cluster keywords, detect
-              ranking shifts, and surface growth opportunities automatically.
+              Use configured AI workflows to organize keywords, interpret search
+              data, identify changes, and turn recurring SEO signals into
+              structured insights.
             </p>
             <ItemList items={seoAiWorkflows} className="knowledge-list" />
-            <p className="knowledge-evidence">
-              Pipelines integrate with SerpApi, Search Console &amp; multi-model
-              clustering.
-              <span>Source: Quoin Engine</span>
-            </p>
           </article>
           <article>
             <div className="section-meta">
               <span>06 — MCP &amp; AI agents</span>
             </div>
-            <h2>Search intelligence for AI tools.</h2>
+            <h2>Connect search intelligence to AI tools.</h2>
             <p>
-              Connect autonomous marketing agents, Claude, and Cursor directly
-              to real-time SERP and search data via standard MCP interfaces.
+              Connect compatible AI tools and agents to configured search
+              intelligence workflows through MCP, allowing SEO data to be
+              queried and used inside AI-assisted workflows.
             </p>
             <ItemList items={seoMcpCapabilities} className="knowledge-list" />
-            <p className="knowledge-evidence">
-              Standardized Model Context Protocol servers for automated querying
-              and monitoring.
-              <span>Source: MCP Protocol</span>
-            </p>
           </article>
         </section>
 
@@ -4211,18 +3628,18 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
         <section className="knowledge-section">
           <div className="section-meta">
             <span>07 — Search environments</span>
-            <span>Every surface where customers search</span>
+            <span>Search visibility across key environments</span>
           </div>
           <div className="knowledge-heading-row">
             <h2>
-              Every surface.
+              One workflow.
               <br />
-              One pipeline.
+              Multiple search signals.
             </h2>
             <p>
-              Search is no longer just ten blue links. We capture visibility
-              across traditional search, local maps, AI generation, and news
-              feeds.
+              Search visibility extends beyond traditional rankings. We can
+              structure intelligence across organic search, local results, SERP
+              features, and supported AI-generated search signals.
             </p>
           </div>
           <div className="knowledge-team-grid">
@@ -4255,13 +3672,9 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
             </div>
             <h2>Adapt search intelligence to your workflow.</h2>
             <p>
-              Configure models, schedules, alert thresholds, and export schemas
-              around your team’s exact reporting cadence.
-            </p>
-            <p className="knowledge-evidence">
-              Supports custom LLM reasoning, OpenAI, Anthropic, and self-hosted
-              models.
-              <span>Source: Quoin Pipeline</span>
+              Configure prompts, schedules, reporting workflows, alert
+              conditions, and output formats around your team’s search
+              objectives.
             </p>
           </div>
           <ItemList
@@ -4274,24 +3687,19 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
         <section className="knowledge-dark-section knowledge-security-section">
           <div className="section-meta">
             <span>09 — Technical audits &amp; crawlers</span>
-            <span>Continuous infrastructure diagnostics</span>
+            <span>Technical SEO diagnostics</span>
           </div>
           <div className="knowledge-dark-grid">
             <div>
               <h2>
-                Keep your organic
+                Understand your
                 <br />
-                health under control.
+                technical SEO health.
               </h2>
               <p>
-                For marketing and engineering teams that require dependable
-                technical auditing, schema validation, crawl diagnostics, and
-                Core Web Vitals tracking.
-              </p>
-              <p className="knowledge-evidence">
-                Scheduled crawler audits with headless rendering and Lighthouse
-                metrics.
-                <span>Source: Quoin Engine</span>
+                For teams that need structured technical SEO analysis across
+                crawlability, metadata, indexing signals, structured data,
+                links, and site architecture.
               </p>
             </div>
             <ItemList
@@ -4307,32 +3715,24 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
             <div className="section-meta">
               <span>10 — Integrations</span>
             </div>
-            <h2>Connect search data to your stack.</h2>
+            <h2>Connect search intelligence to your workflow.</h2>
             <p>
-              Seamlessly pipe clean ranking datasets and crawl results into your
-              business intelligence tools and dashboards.
+              Deliver structured search data and insights into the tools and
+              workflows your team already uses.
             </p>
             <ItemList items={seoIntegrations} className="knowledge-list" />
-            <p className="knowledge-evidence">
-              Native webhooks, REST API endpoints, and direct cloud storage
-              sync.
-              <span>Source: Quoin Platform</span>
-            </p>
           </article>
           <article>
             <div className="section-meta">
               <span>11 — Monitoring &amp; alerts</span>
             </div>
-            <h2>Real-time anomaly detection.</h2>
+            <h2>Scheduled monitoring &amp; alerts.</h2>
             <p>
-              Instant alerts when critical keywords drop, competitors surge, or
-              search engine algorithms shift unexpectedly.
+              Monitor configured search signals and surface meaningful changes
+              in rankings, competitor visibility, backlinks, and AI search
+              signals.
             </p>
             <ItemList items={seoMonitoring} className="knowledge-list" />
-            <p className="knowledge-evidence">
-              Threshold-based trigger alerts to Slack, webhooks, and email.
-              <span>Source: Quoin Platform</span>
-            </p>
           </article>
         </section>
 
@@ -4340,13 +3740,13 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
         <section className="knowledge-section knowledge-use-section">
           <div className="section-meta">
             <span>12 — Use cases</span>
-            <span>Performance-driven marketing teams</span>
+            <span>Search-focused teams</span>
           </div>
           <div className="knowledge-split">
             <h2>
-              Built for performance-
+              Built for search-
               <br />
-              driven teams.
+              focused teams.
             </h2>
             <ItemList items={seoUseCases} className="knowledge-chip-list" />
           </div>
@@ -4365,8 +3765,9 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
               to intelligence.
             </h2>
             <p>
-              A controlled five-stage process for scoping, collecting, auditing,
-              and delivering dependable search intelligence.
+              A structured five-stage process for defining search objectives,
+              collecting data, analyzing signals, and delivering actionable
+              intelligence.
             </p>
           </div>
           <div className="knowledge-process-grid">
@@ -4390,15 +3791,15 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
               search goals.
             </h2>
             <p>
-              Every business targets different keywords, competitors, and
-              geographic markets. We configure the search pipeline around your
-              requirements.
+              Every business targets different keywords, competitors, markets,
+              and reporting requirements. We configure the search intelligence
+              workflow around your objectives.
             </p>
             <a
               href="/consultation"
               onClick={(event) => leavePage(event, "/consultation")}
             >
-              Build your search pipeline <Arrow />
+              Build your search intelligence <Arrow />
             </a>
           </div>
           <ItemList
@@ -4409,20 +3810,39 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
 
         {/* Footer */}
         <footer className="scraping-footer">
-          <a
-            href="/"
-            className="wordmark"
-            aria-label="quion home"
-            onClick={(event) => leavePage(event, "/")}
-          >
-            <BrandLogo />
-          </a>
-          <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
-            Terms &amp; conditions
-          </a>
-          <a href="/" onClick={(event) => leavePage(event, "/")}>
-            Return home <Arrow />
-          </a>
+          <div className="footer-left">
+            <a
+              href="/"
+              className="wordmark"
+              aria-label="quion home"
+              onClick={(event) => leavePage(event, "/")}
+            >
+              <BrandLogo />
+            </a>
+            <span className="footer-copyright">
+              &copy; 2026 Quion. All rights reserved.
+            </span>
+          </div>
+          <div className="footer-legal">
+            <a href="/terms" onClick={(event) => leavePage(event, "/terms")}>
+              Terms &amp; Conditions
+            </a>
+            <span className="footer-sep" aria-hidden="true">
+              ·
+            </span>
+            <a
+              href="/privacy"
+              onClick={(event) => leavePage(event, "/privacy")}
+            >
+              Privacy Policy
+            </a>
+            <span className="footer-sep" aria-hidden="true">
+              ·
+            </span>
+            <a href="/refund" onClick={(event) => leavePage(event, "/refund")}>
+              Refund Policy
+            </a>
+          </div>
         </footer>
       </main>
     </div>
@@ -4447,11 +3867,14 @@ export default function App() {
     if (path === route) return
     window.history.pushState({}, "", path)
     setRoute(path)
+    window.scrollTo(0, 0)
   }
 
   const isModalOpen =
     route === "/consultation" ||
     route === "/terms" ||
+    route === "/privacy" ||
+    route === "/refund" ||
     route === "/scraping" ||
     route === "/knowledge-assistant" ||
     route === "/seo"
@@ -4467,6 +3890,8 @@ export default function App() {
       {route === "/scraping" && <ScrapingPage navigate={navigate} />}
       {route === "/consultation" && <ConsultationPage navigate={navigate} />}
       {route === "/terms" && <TermsPage navigate={navigate} />}
+      {route === "/privacy" && <PrivacyPage navigate={navigate} />}
+      {route === "/refund" && <RefundPage navigate={navigate} />}
       <Chatbot navigate={navigate} />
     </>
   )

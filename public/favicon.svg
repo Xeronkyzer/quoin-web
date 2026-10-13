@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="7" fill="#11110f"/>
-  <circle cx="15" cy="14" r="7" stroke="#f2f2ef" stroke-width="3.2"/>
-  <path d="M17.5 16.5L24 23" stroke="#efff3f" stroke-width="3.2" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Card background -->
+  <rect width="512" height="512" rx="112" fill="#f7f8f3"/>
+  <!-- Subtle border -->
+  <rect x="1" y="1" width="510" height="510" rx="111" stroke="#d7d6d2" stroke-width="2" fill="none"/>
+  <!-- The lowercase "q" glyph -->
+  <path fill="#131210" fill-rule="evenodd" d="M255 134c64.06 0 116 48.13 116 107.5v176.5a19 19 0 0 1-38 0V321.1c-21.5 8.9-49 13.9-78 13.9-64.06 0-116-48.13-116-107.5S190.94 134 255 134zm-.5 35c-43.91 0-79.5 33.58-79.5 75s35.59 75 79.5 75 79.5-33.58 79.5-75-35.59-75-79.5-75z"/>
 </svg>

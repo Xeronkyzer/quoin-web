@@ -46,6 +46,27 @@ Preview the production build locally:
 pnpm preview
 ```
 
+## Production security configuration
+
+Before deploying the API routes to Vercel, configure these encrypted environment
+variables for the Production environment:
+
+- `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` — shared rate-limit
+  and deduplication storage. The API deliberately returns `503` in production
+  if this shared store is unavailable.
+- `INTERNAL_SALT` — a dedicated, randomly generated secret used only for
+  deduplication fingerprints. Do not reuse the Gemini key. Generate at least
+  32 random bytes, for example with `openssl rand -hex 32`.
+- `WEBHOOK_SECRET` — a distinct, high-entropy secret shared with the Google
+  Apps Script endpoints. Those scripts must reject requests unless both the
+  `x-webhook-secret` header and the JSON `secret` field match this value.
+- `GEMINI_API_KEY`, `GOOGLE_SHEET_URL`, and `GOOGLE_SHEET_SUBSCRIBE_URL` — the
+  existing service configuration.
+
+Keep all secrets out of the repository. After setting or rotating these values,
+redeploy and submit one test consultation and newsletter signup to confirm that
+the Google Apps Script validation accepts the secret.
+
 ## Project Structure
 
 ```text

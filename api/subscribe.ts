@@ -14,6 +14,7 @@ const redis =
 const RATE_LIMIT_WINDOW_MS = 60_000
 const MAX_REQUESTS_PER_WINDOW = 5
 const DEDUPLICATION_WINDOW_MS = 15 * 60_000
+const IS_PRODUCTION = process.env.VERCEL_ENV === "production"
 
 type RateLimitEntry = {
   count: number
@@ -61,26 +62,29 @@ function isSafeGoogleScriptUrl(url: string | undefined): boolean {
 }
 
 /**
- * Platform-hardened client IP extraction (prevents raw client X-Forwarded-For spoofing).
+ * Vercel supplies this header at the edge. Do not trust generic forwarding
+ * headers, which a caller may be able to supply themselves.
  */
 function getClientIp(req: VercelRequest): string {
-  const vercelIp =
-    req.headers["x-vercel-forwarded-for"] || req.headers["x-real-ip"]
+  const vercelIp = req.headers["x-vercel-forwarded-for"]
   if (vercelIp && typeof vercelIp === "string") {
     return vercelIp.split(",")[0].trim()
   }
 
-  const forwarded = req.headers["x-forwarded-for"]
-  const forwardedIp = Array.isArray(forwarded)
-    ? forwarded[0]
-    : forwarded?.split(",")[0]
+  return req.socket?.remoteAddress || "127.0.0.1"
+}
 
-  return forwardedIp?.trim() || req.socket?.remoteAddress || "127.0.0.1"
+function getInternalSalt(): string | null {
+  const salt = process.env.INTERNAL_SALT?.trim()
+  return salt || null
 }
 
 async function takeRateLimit(
   key: string,
-): Promise<{ allowed: boolean retryAfterSeconds: number }> {
+): Promise<{
+  allowed: boolean
+  retryAfterSeconds: number
+}> {
   if (!redis) {
     const now = Date.now()
     const existing = memoryRateBuckets.get(key)
@@ -133,10 +137,8 @@ async function isDuplicateSubmission(
   ip: string,
   email: string,
 ): Promise<boolean> {
-  const saltSecret =
-    process.env.INTERNAL_SALT ||
-    process.env.GEMINI_API_KEY ||
-    "quoin-secure-salt-key-9284"
+  const saltSecret = getInternalSalt()
+  if (!saltSecret) return false
   const fingerprint = createHmac("sha256", saltSecret)
     .update(`${ip}\u0000${email}\u0000newsletter`)
     .digest("hex")
@@ -176,7 +178,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       process.env.PRODUCTION_DOMAIN
         ? `https://${process.env.PRODUCTION_DOMAIN}`
         : "",
-      "https://quoin.example.com",
+      "https://quoin.online",
+      "https://www.quoin.online",
     ].filter(Boolean),
   )
 
@@ -220,6 +223,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST")
     return res.status(405).json({ error: "Method not allowed." })
+  }
+
+  if (!getInternalSalt() || (IS_PRODUCTION && !redis)) {
+    console.error("[SECURITY] Required anti-abuse configuration is missing.")
+    return res.status(503).json({
+      error:
+        "Subscription service is temporarily unavailable. Please try again later.",
+    })
+  }
+
+  if (!process.env.WEBHOOK_SECRET?.trim()) {
+    console.error(
+      "[SECURITY] WEBHOOK_SECRET is required to forward subscriptions.",
+    )
+    return res.status(503).json({
+      error:
+        "Subscription service is temporarily unavailable. Please try again later.",
+    })
   }
 
   const ip = getClientIp(req)
@@ -277,7 +298,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const rawSource = cleanText(body.source, 60) || "Website Newsletter"
-    await fetch(GOOGLE_SHEET_SUBSCRIBE_URL, {
+    const sheetResponse = await fetch(GOOGLE_SHEET_SUBSCRIBE_URL, {
       method: "POST",
       signal: AbortSignal.timeout(8000),
       headers: {
@@ -296,11 +317,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           : {}),
       }),
     })
+    if (!sheetResponse.ok) {
+      throw new Error(`Google Sheets returned HTTP ${sheetResponse.status}`)
+    }
   } catch (err) {
     console.error(
       "Failed to forward newsletter subscription to Google Sheets:",
       err,
     )
+    return res.status(502).json({
+      error:
+        "Subscription service is temporarily unavailable. Please try again later.",
+    })
   }
 
   return res.status(200).json({
