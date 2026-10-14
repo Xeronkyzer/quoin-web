@@ -617,14 +617,14 @@ export function BrandLogo({ className = "" }: { className?: string }) {
     <span className={`brand-logo ${className}`}>
       <img
         src="/logo.png"
-        alt="quion"
+        alt="Quoin logo"
         width={456}
         height={180}
         className="brand-logo-img brand-logo-dark"
       />
       <img
         src="/logo-white.png"
-        alt="quion"
+        alt="Quoin logo"
         width={456}
         height={180}
         className="brand-logo-img brand-logo-light"
@@ -1005,8 +1005,10 @@ export function ManagedServicesSection({
 
 export function HeroSection({
   onNavigate,
+  isBackground = false,
 }: {
   onNavigate?: (path: string) => void
+  isBackground?: boolean
 }) {
   const heroFrame = useRef<number | null>(null)
   const pendingHeroPosition = useRef<{
@@ -1119,9 +1121,15 @@ export function HeroSection({
             We turn recurring operational questions into dependable workflows.
           </p>
 
-          <h1 id="hero-title">
-            Operational intelligence for growing businesses.
-          </h1>
+          {isBackground ? (
+            <div id="hero-title" className="hero-title-text" aria-hidden="true">
+              Operational intelligence for growing businesses.
+            </div>
+          ) : (
+            <h1 id="hero-title">
+              Operational intelligence for growing businesses.
+            </h1>
+          )}
 
           <div className="hero-bottom">
             <p>
@@ -1254,7 +1262,7 @@ function HomePage({
       </header>
 
       <main id="top">
-        <HeroSection onNavigate={navigate} />
+        <HeroSection onNavigate={navigate} isBackground={isBackground} />
 
         <ManagedServicesSection navigate={navigate} />
 
@@ -3849,7 +3857,9 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
   )
 }
 
-const ROUTE_SEO: Record<
+export const SITE_URL = "https://quoin.online"
+
+export const ROUTE_SEO: Record<
   string,
   {
     title: string
@@ -3858,52 +3868,52 @@ const ROUTE_SEO: Record<
   }
 > = {
   "/": {
-    title: "Quion — Operational Intelligence for Growing Businesses",
+    title: "Web Scraping, AI Assistants & SEO for Businesses | Quoin",
     description:
-      "Custom web scraping pipelines, private internal AI knowledge assistants, and structured search intelligence for growing businesses.",
-    canonical: "https://www.quoin.online/",
+      "Quoin builds custom web scraping, internal knowledge assistants and SEO reporting for businesses. Every project is scoped in writing before work starts.",
+    canonical: `${SITE_URL}/`,
   },
   "/scraping": {
-    title: "Web Scraping & Data Extraction Pipelines — Quion",
+    title: "Web Scraping & Data Extraction Service | Quoin",
     description:
-      "Custom managed web scraping infrastructure, automated browser clusters, residential proxy rotation, and structured dataset delivery.",
-    canonical: "https://www.quoin.online/scraping",
+      "Custom web scraping and data extraction for businesses: public data collected into CSV, JSON or a database, with a written scope and 7-day review.",
+    canonical: `${SITE_URL}/scraping`,
   },
   "/knowledge-assistant": {
-    title: "Internal Knowledge Assistant — Quion",
+    title: "Internal Knowledge Assistant for Your Documents | Quoin",
     description:
-      "A private, company-specific assistant that helps your team find answers across SOPs, handbooks, and approved knowledge sources.",
-    canonical: "https://www.quoin.online/knowledge-assistant",
+      "An internal AI assistant that answers staff questions from your own documents and handbooks. Scoped, built and handed over as a project.",
+    canonical: `${SITE_URL}/knowledge-assistant`,
   },
   "/seo": {
-    title: "SEO & Search Intelligence — Quion",
+    title: "SEO & Search Intelligence for Businesses | Quoin",
     description:
-      "Research, track, and understand your search visibility with continuous SERP signals, technical health monitoring, and structured intelligence.",
-    canonical: "https://www.quoin.online/seo",
+      "Monthly SEO and search intelligence reports with specific, prioritised recommendations. No ranking or traffic guarantees.",
+    canonical: `${SITE_URL}/seo`,
   },
   "/consultation": {
-    title: "Book an Engineering Consultation — Quion",
+    title: "Book a Consultation | Quoin",
     description:
-      "Schedule a 30-minute technical discovery conversation with our engineering team to verify feasibility, deliverables, and timeline.",
-    canonical: "https://www.quoin.online/consultation",
+      "Describe the data, assistant or SEO project you need. Quoin replies with questions or a written quote.",
+    canonical: `${SITE_URL}/consultation`,
   },
   "/terms": {
-    title: "Terms & Conditions — Quion",
+    title: "Terms & Conditions | Quoin",
     description:
-      "Read the terms, commercial commitments, and service agreements governing Quion engineering engagements and intelligence services.",
-    canonical: "https://www.quoin.online/terms",
+      "Terms & Conditions for Quoin's services, covering payment, scope, deliverables, data protection and dispute resolution.",
+    canonical: `${SITE_URL}/terms`,
   },
   "/privacy": {
-    title: "Privacy Policy — Quion",
+    title: "Privacy Policy | Quoin",
     description:
-      "Our strict data privacy standards, encryption policies, GDPR/DPDP alignment, and client data protection practices.",
-    canonical: "https://www.quoin.online/privacy",
+      "How Quoin collects, uses, shares and protects personal data, and how to exercise your privacy rights.",
+    canonical: `${SITE_URL}/privacy`,
   },
   "/refund": {
-    title: "Refund Policy — Quion",
+    title: "Refund & Cancellation Policy | Quoin",
     description:
-      "Review the clear, milestone-based cancellation and refund policies for Quion managed services.",
-    canonical: "https://www.quoin.online/refund",
+      "When Quoin refunds fees, how to cancel a project or monthly service, and how refunds are processed.",
+    canonical: `${SITE_URL}/refund`,
   },
 }
 
@@ -3930,6 +3940,69 @@ function updateCanonicalUrl(url: string) {
   link.href = url
 }
 
+function ClientNotFound({ navigate }: { navigate: (path: string) => void }) {
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        padding: "2rem",
+        background: "#11110f",
+        color: "#f4f4f0",
+      }}
+    >
+      <p
+        style={{
+          fontSize: "0.875rem",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          opacity: 0.6,
+          marginBottom: "1rem",
+        }}
+      >
+        404 Error
+      </p>
+      <h1 style={{ fontSize: "2.5rem", margin: "0 0 1rem 0", fontWeight: 600 }}>
+        Page Not Found
+      </h1>
+      <p
+        style={{
+          maxWidth: "460px",
+          opacity: 0.75,
+          lineHeight: 1.6,
+          marginBottom: "2rem",
+        }}
+      >
+        The page you are looking for does not exist or has been moved.
+      </p>
+      <a
+        href="/"
+        onClick={(e) => {
+          e.preventDefault()
+          navigate("/")
+        }}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "0.875rem 2rem",
+          borderRadius: "9999px",
+          background: "#f4f4f0",
+          color: "#11110f",
+          fontWeight: 600,
+          textDecoration: "none",
+        }}
+      >
+        Return to Homepage
+      </a>
+    </div>
+  )
+}
+
 export default function App() {
   useSmoothScroll({ ease: 0.085 })
   const [route, setRoute] = useState(window.location.pathname)
@@ -3945,15 +4018,53 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const seo = ROUTE_SEO[route] || ROUTE_SEO["/"]
+    const isKnown = route in ROUTE_SEO
+    if (!isKnown) {
+      document.title = "404 - Page Not Found | Quoin"
+      return
+    }
+
+    const seo = ROUTE_SEO[route]
     document.title = seo.title
     updateMetaTag('meta[name="description"]', "content", seo.description)
     updateMetaTag('meta[property="og:title"]', "content", seo.title)
     updateMetaTag('meta[property="og:description"]', "content", seo.description)
     updateMetaTag('meta[property="og:url"]', "content", seo.canonical)
-    updateMetaTag('meta[name="twitter:title"]', "content", seo.title)
-    updateMetaTag('meta[name="twitter:description"]', "content", seo.description)
+    updateMetaTag('meta[property="og:site_name"]', "content", "Quoin")
+    updateMetaTag('meta[property="og:type"]', "content", "website")
     updateCanonicalUrl(seo.canonical)
+
+    // Remove any Twitter tags if present
+    const twitterTags = document.querySelectorAll(
+      'meta[name^="twitter:"], meta[property^="twitter:"]'
+    )
+    twitterTags.forEach((tag) => tag.remove())
+
+    // Homepage only Organization JSON-LD
+    const schemaScript = document.getElementById("schema-org-data")
+    if (route === "/") {
+      if (!schemaScript) {
+        const script = document.createElement("script")
+        script.id = "schema-org-data"
+        script.type = "application/ld+json"
+        script.textContent = JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Quoin",
+          url: SITE_URL,
+          email: "contact@quoin.online",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Greater Noida",
+            addressRegion: "Uttar Pradesh",
+            addressCountry: "IN",
+          },
+        })
+        document.head.appendChild(script)
+      }
+    } else if (schemaScript) {
+      schemaScript.remove()
+    }
   }, [route])
 
   function navigate(path: string) {
@@ -3961,6 +4072,17 @@ export default function App() {
     window.history.pushState({}, "", path)
     setRoute(path)
     window.scrollTo(0, 0)
+  }
+
+  const isKnownRoute = route in ROUTE_SEO
+
+  if (!isKnownRoute) {
+    return (
+      <>
+        <CustomCursor />
+        <ClientNotFound navigate={navigate} />
+      </>
+    )
   }
 
   const isModalOpen =

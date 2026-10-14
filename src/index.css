@@ -388,7 +388,8 @@ footer a:hover {
   text-align: right;
 }
 
-.hero h1 {
+.hero h1,
+.hero #hero-title {
   max-width: 990px;
   margin: 0;
   font-size: clamp(60px, 7.5vw, 120px);
