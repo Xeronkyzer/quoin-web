@@ -3849,6 +3849,87 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
   )
 }
 
+const ROUTE_SEO: Record<
+  string,
+  {
+    title: string
+    description: string
+    canonical: string
+  }
+> = {
+  "/": {
+    title: "Quion — Operational Intelligence for Growing Businesses",
+    description:
+      "Custom web scraping pipelines, private internal AI knowledge assistants, and structured search intelligence for growing businesses.",
+    canonical: "https://www.quoin.online/",
+  },
+  "/scraping": {
+    title: "Web Scraping & Data Extraction Pipelines — Quion",
+    description:
+      "Custom managed web scraping infrastructure, automated browser clusters, residential proxy rotation, and structured dataset delivery.",
+    canonical: "https://www.quoin.online/scraping",
+  },
+  "/knowledge-assistant": {
+    title: "Internal Knowledge Assistant — Quion",
+    description:
+      "A private, company-specific assistant that helps your team find answers across SOPs, handbooks, and approved knowledge sources.",
+    canonical: "https://www.quoin.online/knowledge-assistant",
+  },
+  "/seo": {
+    title: "SEO & Search Intelligence — Quion",
+    description:
+      "Research, track, and understand your search visibility with continuous SERP signals, technical health monitoring, and structured intelligence.",
+    canonical: "https://www.quoin.online/seo",
+  },
+  "/consultation": {
+    title: "Book an Engineering Consultation — Quion",
+    description:
+      "Schedule a 30-minute technical discovery conversation with our engineering team to verify feasibility, deliverables, and timeline.",
+    canonical: "https://www.quoin.online/consultation",
+  },
+  "/terms": {
+    title: "Terms & Conditions — Quion",
+    description:
+      "Read the terms, commercial commitments, and service agreements governing Quion engineering engagements and intelligence services.",
+    canonical: "https://www.quoin.online/terms",
+  },
+  "/privacy": {
+    title: "Privacy Policy — Quion",
+    description:
+      "Our strict data privacy standards, encryption policies, GDPR/DPDP alignment, and client data protection practices.",
+    canonical: "https://www.quoin.online/privacy",
+  },
+  "/refund": {
+    title: "Refund Policy — Quion",
+    description:
+      "Review the clear, milestone-based cancellation and refund policies for Quion managed services.",
+    canonical: "https://www.quoin.online/refund",
+  },
+}
+
+function updateMetaTag(selector: string, attr: string, value: string) {
+  let element = document.querySelector(selector)
+  if (!element) {
+    element = document.createElement("meta")
+    const match = selector.match(/meta\[([a-zA-Z:-]+)=['"]?([^'"]+)['"]?\]/)
+    if (match) {
+      element.setAttribute(match[1], match[2])
+    }
+    document.head.appendChild(element)
+  }
+  element.setAttribute(attr, value)
+}
+
+function updateCanonicalUrl(url: string) {
+  let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+  if (!link) {
+    link = document.createElement("link")
+    link.rel = "canonical"
+    document.head.appendChild(link)
+  }
+  link.href = url
+}
+
 export default function App() {
   useSmoothScroll({ ease: 0.085 })
   const [route, setRoute] = useState(window.location.pathname)
@@ -3862,6 +3943,18 @@ export default function App() {
     window.addEventListener("popstate", handleHistoryChange)
     return () => window.removeEventListener("popstate", handleHistoryChange)
   }, [])
+
+  useEffect(() => {
+    const seo = ROUTE_SEO[route] || ROUTE_SEO["/"]
+    document.title = seo.title
+    updateMetaTag('meta[name="description"]', "content", seo.description)
+    updateMetaTag('meta[property="og:title"]', "content", seo.title)
+    updateMetaTag('meta[property="og:description"]', "content", seo.description)
+    updateMetaTag('meta[property="og:url"]', "content", seo.canonical)
+    updateMetaTag('meta[name="twitter:title"]', "content", seo.title)
+    updateMetaTag('meta[name="twitter:description"]', "content", seo.description)
+    updateCanonicalUrl(seo.canonical)
+  }, [route])
 
   function navigate(path: string) {
     if (path === route) return
