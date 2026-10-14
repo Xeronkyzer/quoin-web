@@ -320,6 +320,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!sheetResponse.ok) {
       throw new Error(`Google Sheets returned HTTP ${sheetResponse.status}`)
     }
+
+    const sheetData = (await sheetResponse.json().catch(() => ({}))) as Record<
+      string,
+      unknown
+    >
+    if (sheetData.error) {
+      throw new Error(`Google Sheets returned error: ${sheetData.error}`)
+    }
   } catch (err) {
     console.error(
       "Failed to forward newsletter subscription to Google Sheets:",
