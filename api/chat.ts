@@ -111,9 +111,10 @@ type CachedWebsiteSource = {
   expiresAt: number
 }
 
-const QUOIN_ORIGIN = "https://quoin.online"
+const QUOIN_ORIGIN = "https://www.quoin.online"
 const QUOIN_ALLOWED_WEBSITE_HOSTS = new Set([
   "quoin.online",
+  "www.quoin.online",
 ])
 const WEBSITE_CACHE_PREFIX = "chat:website:v1"
 
@@ -1308,6 +1309,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         ? `https://${process.env.PRODUCTION_DOMAIN}`
         : "",
       "https://quoin.online",
+      "https://www.quoin.online",
     ].filter(Boolean),
   )
 

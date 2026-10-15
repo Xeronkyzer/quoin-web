@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://quoin.online/sitemap.xml
+Sitemap: https://www.quoin.online/sitemap.xml

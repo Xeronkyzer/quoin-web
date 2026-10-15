@@ -3857,7 +3857,7 @@ export function SeoPage({ navigate }: { navigate: (path: string) => void }) {
   )
 }
 
-export const SITE_URL = "https://quoin.online"
+export const SITE_URL = "https://www.quoin.online"
 
 export const ROUTE_SEO: Record<
   string,
@@ -4032,13 +4032,15 @@ export default function App() {
     updateMetaTag('meta[property="og:url"]', "content", seo.canonical)
     updateMetaTag('meta[property="og:site_name"]', "content", "Quoin")
     updateMetaTag('meta[property="og:type"]', "content", "website")
+    updateMetaTag('meta[property="og:image"]', "content", `${SITE_URL}/og-image.png`)
+    updateMetaTag('meta[property="og:image:width"]', "content", "1200")
+    updateMetaTag('meta[property="og:image:height"]', "content", "630")
+    updateMetaTag('meta[property="og:image:alt"]', "content", seo.title)
+    updateMetaTag('meta[name="twitter:card"]', "content", "summary_large_image")
+    updateMetaTag('meta[name="twitter:title"]', "content", seo.title)
+    updateMetaTag('meta[name="twitter:description"]', "content", seo.description)
+    updateMetaTag('meta[name="twitter:image"]', "content", `${SITE_URL}/og-image.png`)
     updateCanonicalUrl(seo.canonical)
-
-    // Remove any Twitter tags if present
-    const twitterTags = document.querySelectorAll(
-      'meta[name^="twitter:"], meta[property^="twitter:"]'
-    )
-    twitterTags.forEach((tag) => tag.remove())
 
     // Homepage only Organization JSON-LD
     const schemaScript = document.getElementById("schema-org-data")
